@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: system/identity/v1/identity_service.proto
+// source: platform/identity/v1/identity_service.proto
 
 package identityV1
 
@@ -142,5 +142,5 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "system/identity/v1/identity_service.proto",
+	Metadata: "platform/identity/v1/identity_service.proto",
 }

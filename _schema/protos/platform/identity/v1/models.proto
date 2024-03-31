@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/viqueen/besto/_api/go-sdk/system/identity/v1;identityV1";
+option go_package = "github.com/viqueen/besto/_api/go-sdk/platform/identity/v1;identityV1";
 
 message GoogleProfile {
   string id = 1;
