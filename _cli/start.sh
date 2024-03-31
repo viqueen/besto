@@ -5,4 +5,8 @@ function harness() {
   yarn workspace @besto/harness web:dev
 }
 
+function platform() {
+  yarn workspace @besto/platform web:dev
+}
+
 eval "$@"

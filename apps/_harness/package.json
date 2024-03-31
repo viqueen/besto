@@ -5,7 +5,6 @@
   "scripts": {
     "env:up": "docker-compose up -d",
     "env:down": "docker-compose down",
-    "server:dev": "go run server/cmd/main.go",
     "web:dev": "webpack serve"
   }
 }
