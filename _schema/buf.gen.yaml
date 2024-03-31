@@ -1,0 +1,8 @@
+version: v1
+plugins:
+  - plugin: go
+    out: ../besto-go/_api
+    opt: paths=source_relative
+  - plugin: go-grpc
+    out: ../besto-go/_api
+    opt: paths=source_relative
