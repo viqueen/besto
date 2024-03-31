@@ -3,6 +3,8 @@ import React from "react";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
+import { APIProvider } from "../api";
+
 import { App } from "./app";
 const Platform = () => {
   const theme = createTheme({
@@ -19,7 +21,9 @@ const Platform = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App />
+      <APIProvider>
+        <App />
+      </APIProvider>
     </ThemeProvider>
   );
 };
