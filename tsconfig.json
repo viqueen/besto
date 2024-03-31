@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["dom", "es6"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "paths": {
+      "@besto/*": ["_harness", "besto-web/*"]
+    },
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2017"
+  },
+  "include": ["_harness", "besto-web"]
+}
