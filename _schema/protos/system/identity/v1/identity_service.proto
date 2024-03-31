@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "github.com/viqueen/besto/_api/go-sdk/system/identity/v1;identityV1";
+
+import "system/identity/v1/models.proto";
+
+service IdentityService {
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc SignIn(SignInRequest) returns (SignInResponse);
+}
+
+message SignUpRequest {
+  IdentityProvider provider = 1;
+}
+
+message SignUpResponse {
+  Identity identity = 1;
+}
+
+message SignInRequest {
+  IdentityProvider provider = 1;
+}
+
+message SignInResponse {
+  Identity identity = 1;
+}

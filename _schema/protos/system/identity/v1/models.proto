@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = "github.com/viqueen/besto/_api/go-sdk/system/identity/v1;identityV1";
+
+message GoogleProfile {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  string given_name = 4;
+  string family_name = 5;
+  string picture = 6;
+  string locale = 7;
+}
+
+message GithubProfile {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  string login = 4;
+  string avatar_url = 5;
+  string html_url = 6;
+  string location = 7;
+  string bio = 8;
+}
+
+enum IdentityProvider {
+  GOOGLE = 0;
+  GITHUB = 1;
+}
+
+message IdentityProfile {
+  string id = 1;
+  IdentityProvider provider = 2;
+  oneof profile {
+    GoogleProfile google = 3;
+    GithubProfile github = 4;
+  }
+}
+
+message IdentityEmail {
+  string value = 1;
+  bool verified = 2;
+}
+
+message Identity {
+  string id = 1;
+  IdentityEmail primary_email = 2;
+  repeated IdentityEmail emails = 3;
+  repeated IdentityProfile profiles = 4;
+}

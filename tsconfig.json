@@ -9,7 +9,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "paths": {
-      "@besto/*": ["_harness", "besto-web/*"]
+      "@besto/*": [
+        "_api/web-sdk"
+      ]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -17,5 +19,7 @@
     "strict": true,
     "target": "ES2017"
   },
-  "include": ["_harness", "besto-web"]
+  "include": [
+    "_api/web-sdk",
+  ]
 }
