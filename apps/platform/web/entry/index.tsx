@@ -6,6 +6,8 @@ import DialpadIcon from "@mui/icons-material/Dialpad";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
+import { DashboardPage, LoginPage } from "../pages";
+
 const Platform = () => {
   const theme = createTheme({
     palette: {
@@ -26,9 +28,9 @@ const Platform = () => {
       <PageLayout topNav={topNav} sidebarNav={sidebarNav}>
         <HashRouter>
           <Routes>
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/home" element={<div>Home</div>} />
-            <Route path="/login" element={<div>Login</div>} />
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </HashRouter>
       </PageLayout>
