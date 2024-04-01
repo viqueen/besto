@@ -16,7 +16,7 @@ const useConnectApi = () => useContext(ConnectApiContext);
 
 const ConnectApiProvider = ({ children }: PropsWithChildren) => {
   const transport = createGrpcWebTransport({
-    baseUrl: "http://localhost:9901",
+    baseUrl: "http://localhost:8080",
     credentials: "include",
   });
 

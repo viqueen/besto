@@ -47,8 +47,7 @@ services:
       - "./envoy.yaml:/etc/envoy/envoy.yaml"
       - "../../tmp/envoy:/tmp"
     ports:
-      - "9900:9900"
-      - "9901:9901"
+      - "8080:8080"
     networks:
       - "local"
 
