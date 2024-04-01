@@ -6,3 +6,9 @@ plugins:
   - plugin: go-grpc
     out: ../_api/go-sdk
     opt: paths=source_relative
+  - plugin: es
+    out: ../_api/web-sdk
+    opt: target=ts
+  - plugin: connect-es
+    out: ../_api/web-sdk
+    opt: target=ts

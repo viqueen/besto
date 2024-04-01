@@ -12,6 +12,7 @@ function schema() {
   docker run \
     --volume "${PWD}/_schema:/workspace/_schema" \
     --volume "${PWD}/_api/go-sdk:/workspace/_api/go-sdk" \
+    --volume "${PWD}/_api/web-sdk:/workspace/_api/web-sdk" \
     --workdir "/workspace/_schema" \
     viqueen/protobuf-gen buf generate --verbose
 }
