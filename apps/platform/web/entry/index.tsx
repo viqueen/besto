@@ -1,11 +1,11 @@
 import React from "react";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { PageLayout } from "@besto/lib-web-sdk";
+import DialpadIcon from "@mui/icons-material/Dialpad";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
-import { APIProvider } from "../api";
-
-import { App } from "./app";
 const Platform = () => {
   const theme = createTheme({
     palette: {
@@ -18,12 +18,20 @@ const Platform = () => {
       },
     },
   });
+  const topNav = { Logo: DialpadIcon, productName: "@besto/platform" };
+  const sidebarNav = {};
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <APIProvider>
-        <App />
-      </APIProvider>
+      <PageLayout topNav={topNav} sidebarNav={sidebarNav}>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<div>Home</div>} />
+            <Route path="/login" element={<div>Login</div>} />
+          </Routes>
+        </HashRouter>
+      </PageLayout>
     </ThemeProvider>
   );
 };

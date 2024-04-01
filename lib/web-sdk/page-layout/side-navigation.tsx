@@ -10,6 +10,9 @@ interface SideNavigationProps {
 const drawerWidth = 240;
 
 const SideNavigation = ({ Primary, Secondary }: SideNavigationProps) => {
+  if (!Primary && !Secondary) {
+    return null;
+  }
   return (
     <Drawer
       variant="permanent"
