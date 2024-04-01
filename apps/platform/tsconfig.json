@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "web",
+    "outDir": "dist"
+  },
+  "include": [
+    "web"
+  ]
+}

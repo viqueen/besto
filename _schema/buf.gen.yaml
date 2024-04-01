@@ -7,8 +7,8 @@ plugins:
     out: ../_api/go-sdk
     opt: paths=source_relative
   - plugin: es
-    out: ../_api/web-sdk
+    out: ../_api/web-sdk/src
     opt: target=ts
   - plugin: connect-es
-    out: ../_api/web-sdk
+    out: ../_api/web-sdk/src
     opt: target=ts

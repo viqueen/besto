@@ -7,9 +7,9 @@
   "license": "Apache-2.0",
   "private": true,
   "workspaces": [
-    "_api/web-sdk/**",
+    "_api/web-sdk",
     "apps/**",
-    "lib/web-sdk/**"
+    "lib/web-sdk"
   ],
   "scripts": {
     "lint": "eslint . --ext .ts",
@@ -36,12 +36,15 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^1.8.0",
+    "@connectrpc/connect": "^1.4.0",
+    "@connectrpc/connect-web": "^1.4.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.22.3"
   }
 }

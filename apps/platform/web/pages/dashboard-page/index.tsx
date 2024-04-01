@@ -1,10 +1,14 @@
 import React from "react";
 
+import { IdentityRequired } from "../../context-providers";
+
 const DashboardPage = () => {
   return (
-    <div>
-      <h1>Dashboard Page</h1>
-    </div>
+    <IdentityRequired>
+      <div>
+        <h1>Dashboard page</h1>
+      </div>
+    </IdentityRequired>
   );
 };
 

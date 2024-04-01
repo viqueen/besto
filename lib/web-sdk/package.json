@@ -2,5 +2,13 @@
   "name": "@besto/lib-web-sdk",
   "version": "1.0.0",
   "private": true,
-  "main": "index.ts"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w"
+  }
 }
