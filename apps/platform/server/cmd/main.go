@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/viqueen/besto/apps/platform/server/export"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -14,7 +17,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	server := grpc.NewServer()
+
+	zapLogger, _ := zap.NewDevelopment()
+	defer zapLogger.Sync()
+
+	server := grpc.NewServer(
+		grpc.UnaryInterceptor(grpcmiddleware.ChainUnaryServer(
+			grpczap.UnaryServerInterceptor(zapLogger),
+		)),
+		grpc.StreamInterceptor(grpcmiddleware.ChainStreamServer(
+			grpczap.StreamServerInterceptor(zapLogger),
+		)),
+	)
 
 	export.Bundle(server)
 
