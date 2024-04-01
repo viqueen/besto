@@ -29,6 +29,18 @@ const OpsSection = () => {
       password: "admin",
     },
   };
+  const envoyWidget = {
+    title: "Envoy",
+    description: "Service mesh",
+    links: {
+      docs: "https://www.envoyproxy.io/docs/envoy/v1.29.2/",
+      browser: "http://localhost:9900/",
+    },
+    auth: {
+      username: "admin",
+      password: "admin",
+    },
+  };
   return (
     <>
       <Typography variant="h4" sx={{ mb: 2 }}>
@@ -40,6 +52,9 @@ const OpsSection = () => {
         </Grid>
         <Grid item xs={3}>
           <Widget {...neo4jWidget} />
+        </Grid>
+        <Grid item xs={3}>
+          <Widget {...envoyWidget} />
         </Grid>
       </Grid>
     </>

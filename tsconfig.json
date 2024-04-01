@@ -10,9 +10,9 @@
     "moduleResolution": "node",
     "paths": {
       "@besto/*": [
-        "_api/web-sdk",
+        "_api/web-sdk/*",
         "apps/*",
-        "lib/web-sdk"
+        "lib/web-sdk/*"
       ]
     },
     "resolveJsonModule": true,

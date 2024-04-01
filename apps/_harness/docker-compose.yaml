@@ -41,6 +41,17 @@ services:
     networks:
       - "local"
 
+  envoy-proxy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+      - "./envoy.yaml:/etc/envoy/envoy.yaml"
+      - "../../tmp/envoy:/tmp"
+    ports:
+      - "9900:9900"
+      - "9901:9901"
+    networks:
+      - "local"
+
 networks:
   local:
     driver: "bridge"
