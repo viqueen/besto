@@ -5,6 +5,7 @@ go 1.22.0
 require google.golang.org/grpc v1.62.1
 
 require (
+	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect

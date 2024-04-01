@@ -5,6 +5,7 @@ import (
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/viqueen/besto/apps/platform/server/export"
+	"github.com/viqueen/besto/apps/platform/server/internal/interceptor"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"log"
@@ -24,6 +25,7 @@ func main() {
 	server := grpc.NewServer(
 		grpc.UnaryInterceptor(grpcmiddleware.ChainUnaryServer(
 			grpczap.UnaryServerInterceptor(zapLogger),
+			interceptor.UnaryAuthInterceptor,
 		)),
 		grpc.StreamInterceptor(grpcmiddleware.ChainStreamServer(
 			grpczap.StreamServerInterceptor(zapLogger),
