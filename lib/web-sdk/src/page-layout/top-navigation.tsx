@@ -20,6 +20,7 @@ const TopNavigation = ({ Logo, productName }: TopNavigationProps) => {
         <Toolbar variant="dense">
           <Logo sx={{ display: { xs: "flex", md: "flex" }, mr: 1 }} />
           <Typography
+            component="a"
             sx={{
               display: { xs: "flex", md: "flex" },
               fontFamily: "monospace",
@@ -28,6 +29,7 @@ const TopNavigation = ({ Logo, productName }: TopNavigationProps) => {
               textDecoration: "none",
               marginRight: 2,
             }}
+            href="/"
           >
             {productName}
           </Typography>

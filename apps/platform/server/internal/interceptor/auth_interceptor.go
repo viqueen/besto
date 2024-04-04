@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func UnaryAuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func UnaryAuthInterceptor(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	// extract metadata from context
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -19,6 +19,13 @@ func UnaryAuthInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	if len(session) == 0 {
 		return nil, status.Error(codes.Unauthenticated, "missing session")
 	}
-	// TODO: validate session
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+	if !isAuthorized(session[0]) {
+		return nil, status.Error(codes.Unauthenticated, "invalid session")
+	}
+	return handler(ctx, req)
+}
+
+func isAuthorized(_ string) bool {
+	// TODO: implement session validation
+	return true
 }

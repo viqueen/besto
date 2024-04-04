@@ -4,6 +4,8 @@ import { IdentityService } from "@besto/api-web-sdk";
 import { createPromiseClient, PromiseClient } from "@connectrpc/connect";
 import { createGrpcWebTransport } from "@connectrpc/connect-web";
 
+import { loggingInterceptor } from "./interceptors";
+
 interface ConnectApi {
   identityClient: PromiseClient<typeof IdentityService>;
 }
@@ -18,6 +20,7 @@ const ConnectApiProvider = ({ children }: PropsWithChildren) => {
   const transport = createGrpcWebTransport({
     baseUrl: "http://localhost:8080",
     credentials: "include",
+    interceptors: [loggingInterceptor()],
   });
 
   const identityClient = createPromiseClient(IdentityService, transport);
