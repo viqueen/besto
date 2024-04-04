@@ -26,9 +26,16 @@ const useIdentity = () => useContext(IdentityContext);
 
 const IdentityRequired = ({ children }: PropsWithChildren) => {
   const { identityClient } = useConnectApi();
-  const { data, error, isLoading } = useQuery("getIdentity", async () => {
-    return await identityClient.getIdentity({});
-  });
+  const { data, error, isLoading } = useQuery(
+    "getIdentity",
+    async () => {
+      return await identityClient.getIdentity({});
+    },
+    {
+      // TODO: fix retry logic when the error is a 5xx error
+      retry: false,
+    },
+  );
 
   return (
     <>
