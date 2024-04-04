@@ -15,9 +15,15 @@ const loggingInterceptor = (): Interceptor => {
       req: UnaryRequest | StreamRequest,
     ): Promise<UnaryResponse | StreamResponse> => {
       console.log("Request", req);
-      const res = await next(req);
-      console.log("Response", res);
-      return res;
+      return next(req)
+        .then((res) => {
+          console.log("Response", res);
+          return res;
+        })
+        .catch((err) => {
+          console.error("** in here", err);
+          throw err;
+        });
     };
   };
 };

@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/viqueen/besto/apps/platform/server/export"
 	"github.com/viqueen/besto/apps/platform/server/internal/interceptor"
 	"go.uber.org/zap"
@@ -23,13 +22,11 @@ func main() {
 	defer zapLogger.Sync()
 
 	server := grpc.NewServer(
-		grpc.UnaryInterceptor(grpcmiddleware.ChainUnaryServer(
-			grpczap.UnaryServerInterceptor(zapLogger),
+		grpc.ChainUnaryInterceptor(
+			grpc_zap.UnaryServerInterceptor(zapLogger),
 			interceptor.UnaryAuthInterceptor,
-		)),
-		grpc.StreamInterceptor(grpcmiddleware.ChainStreamServer(
-			grpczap.StreamServerInterceptor(zapLogger),
-		)),
+		),
+		grpc.ChainStreamInterceptor(),
 	)
 
 	export.Bundle(server)
