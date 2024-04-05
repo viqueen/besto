@@ -33,12 +33,6 @@ const Platform = () => {
   const theme = createTheme({
     palette: {
       mode: "light",
-      primary: {
-        main: "#FF5630",
-      },
-      secondary: {
-        main: "#FF7452",
-      },
     },
   });
 

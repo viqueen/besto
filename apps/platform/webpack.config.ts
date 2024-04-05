@@ -1,8 +1,16 @@
 import path from "path";
 
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import { Configuration } from "webpack";
+import { Configuration, DefinePlugin } from "webpack";
 import { Configuration as DevConfiguration } from "webpack-dev-server";
+
+const authzGithubUrl = () => {
+  return "http://localhost:4000/authz/_github";
+};
+
+const authzGoogleUrl = () => {
+  return "http://localhost:4000/authz/_google";
+};
 
 const config: Configuration & DevConfiguration = {
   mode: "development",
@@ -27,6 +35,12 @@ const config: Configuration & DevConfiguration = {
     ],
   },
   plugins: [
+    new DefinePlugin({
+      __GATEWAY__: JSON.stringify({
+        authzGoogleUrl: authzGoogleUrl(),
+        authzGithubUrl: authzGithubUrl(),
+      }),
+    }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "web", "entry", "index.html"),
     }),
