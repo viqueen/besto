@@ -7,13 +7,15 @@
   "license": "Apache-2.0",
   "private": true,
   "workspaces": [
+    "_api/node-sdk",
     "_api/web-sdk",
     "apps/**",
     "lib/web-sdk"
   ],
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "schema": "./_cli/build.sh schema"
   },
   "devDependencies": {
     "@labset-eslint/eslint-plugin": "^1.3.0",

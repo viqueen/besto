@@ -12,3 +12,6 @@ plugins:
   - plugin: connect-es
     out: ../_api/web-sdk/src
     opt: target=ts
+  - plugin: es
+    out: ../_api/node-sdk/src
+    opt: target=ts
