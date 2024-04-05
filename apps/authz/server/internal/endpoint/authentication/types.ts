@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { SessionData } from "express-session";
 
-import { IAuthSessionService } from "../service/session-service";
+import { IAuthSessionService } from "../../service/session-service";
 
 interface AuthenticationEndpointProps {
   app: Express;

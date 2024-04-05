@@ -6,7 +6,7 @@ import express, { Express } from "express";
 import morgan from "morgan";
 
 import { bootstrapAuth } from "../internal/bootstrap";
-import { authenticationEndpoint } from "../internal/endpoint";
+import { apiEndpoint, authenticationEndpoint } from "../internal/endpoint";
 
 interface WithExpressApp {
   app: Express;
@@ -31,6 +31,7 @@ const configureAuthz = async ({
     product,
     secrets,
   });
+  await apiEndpoint({ app });
   return { app };
 };
 
