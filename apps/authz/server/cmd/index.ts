@@ -26,13 +26,12 @@ const configureAuthz = async ({
     localstackDynamoDbClientConfig,
     true,
   );
-  await withPassportAuth({ app, services });
   await authenticationEndpoint({
     app,
     services,
     product,
   });
-  await apiEndpoint({ app });
+  await apiEndpoint({ app, services });
   return { app };
 };
 

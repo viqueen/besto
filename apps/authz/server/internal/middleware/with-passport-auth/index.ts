@@ -1,11 +1,10 @@
 import { IdentityProvider } from "@besto/api-node-sdk";
-import { Express, json, urlencoded } from "express";
+import { Express, json, RequestHandler, urlencoded } from "express";
 import session, { SessionData } from "express-session";
 import passport from "passport";
 import { uid } from "uid/secure";
 
-import { ISecretService } from "../../service";
-import { IAuthSessionService } from "../../service/session-service";
+import { ISecretService, IAuthSessionService } from "../../service";
 
 import { AuthSessionStore } from "./auth-session-store";
 
@@ -31,17 +30,25 @@ passport.deserializeUser<Express.User>((user, done) => {
 });
 
 interface WithPassportAuth {
+  target: string;
   app: Express;
   services: {
     authSession: IAuthSessionService<SessionData>;
     secret: ISecretService;
   };
+  middlewares: RequestHandler[];
 }
 
-const withPassportAuth = async ({ app, services }: WithPassportAuth) => {
+const withPassportAuth = async ({
+  target,
+  app,
+  services,
+  middlewares,
+}: WithPassportAuth) => {
   const store = new AuthSessionStore(services.authSession);
   const cookieSecret = await services.secret.cookie();
   app.use(
+    target,
     json(),
     urlencoded({ extended: true }),
     session({
@@ -58,6 +65,9 @@ const withPassportAuth = async ({ app, services }: WithPassportAuth) => {
         maxAge: 1000 * 60 * 60 * 24 * 7,
       },
     }),
+    passport.initialize(),
+    passport.session(),
+    ...middlewares,
   );
 };
 
