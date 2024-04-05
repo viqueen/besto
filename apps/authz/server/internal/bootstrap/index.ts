@@ -36,7 +36,7 @@ const bootstrapAuth = async (
   const access = authAccess<SessionData>(clients);
   const product = {
     gatewayUrl: "http://localhost:4000",
-    baseUrl: "http://localhost:4040",
+    baseUrl: "http://localhost:10000",
   };
   const secrets = {
     google: {

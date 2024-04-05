@@ -38,10 +38,10 @@ static_resources:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
                     http_service:
                       server_uri:
-                        uri: http://host.docker.internal:4000/authz
+                        uri: http://host.docker.internal:4000/api
                         cluster: authz_cluster
                         timeout: 5s
-                      path_prefix: "/authz"
+                      path_prefix: "/api"
                     failure_mode_allow: false
                 - name: envoy.grpc_web
                   typed_config:

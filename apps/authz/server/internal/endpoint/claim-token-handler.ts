@@ -1,6 +1,15 @@
 import { RequestHandler } from "express";
 import { uid } from "uid/secure";
 
+declare module "express-session" {
+  interface SessionData {
+    id: string;
+    claimToken: string;
+    authToken: string;
+    expiresAt: Date;
+  }
+}
+
 const claimTokenHandler = (): RequestHandler => (request, response) => {
   const session = request.session;
   if (!session) {

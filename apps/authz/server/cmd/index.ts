@@ -1,4 +1,7 @@
+import path from "path";
+
 import { localstackDynamoDbClientConfig } from "@besto/lib-node-sdk";
+import dotenv from "dotenv";
 import express, { Express } from "express";
 import morgan from "morgan";
 
@@ -44,6 +47,7 @@ const startExpressApp = async ({ app }: WithExpressApp) => {
   process.on("SIGINT", shutdown);
 };
 
+dotenv.config({ path: path.resolve(__dirname, ".env.localstack") });
 createExpressApp()
   .then(configureAuthz)
   .then(startExpressApp)
