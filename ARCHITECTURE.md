@@ -1,18 +1,21 @@
 ## architecture
 
+
+### Auth Overview
+
 ```mermaid
 sequenceDiagram
     participant Client
     participant EnvoyProxy
-    participant AuthZService
+    participant AuthZCluster
     participant ServiceCluster
     Client->>EnvoyProxy: Request
-    EnvoyProxy->>AuthZService: Delegate Authentication
-    AuthZService-->>EnvoyProxy: Authentication Result
-    Note over EnvoyProxy,AuthZService: If Authenticated
+    EnvoyProxy->>AuthZCluster: Delegate Authentication
+    AuthZCluster-->>EnvoyProxy: Authentication Result
+    Note over EnvoyProxy,AuthZCluster: If Authenticated
     EnvoyProxy->>ServiceCluster: Forward Request
     ServiceCluster-->>EnvoyProxy: Response
     EnvoyProxy-->>Client: Response
-    Note over EnvoyProxy,AuthZService: If Not Authenticated
+    Note over EnvoyProxy,AuthZCluster: If Not Authenticated
     EnvoyProxy-->>Client: Authentication Failed
 ```
