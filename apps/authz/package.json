@@ -1,0 +1,9 @@
+{
+  "name": "@besto/authz",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "server:dev": "nodemon",
+    "web:dev": "webpack serve"
+  }
+}
