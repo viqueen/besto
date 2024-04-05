@@ -10,6 +10,7 @@
     "_api/node-sdk",
     "_api/web-sdk",
     "apps/**",
+    "lib/node-sdk",
     "lib/web-sdk"
   ],
   "scripts": {
