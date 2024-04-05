@@ -1,5 +1,9 @@
+import { localstackDynamoDbClientConfig } from "@besto/lib-node-sdk";
 import express, { Express } from "express";
 import morgan from "morgan";
+
+import { bootstrapAuth } from "../internal/bootstrap";
+import { authenticationEndpoint } from "../internal/endpoint";
 
 interface WithExpressApp {
   app: Express;
@@ -11,11 +15,18 @@ const createExpressApp = async (): Promise<WithExpressApp> => {
   return { app };
 };
 
-const configureEndpoints = async ({
+const configureAuthz = async ({
   app,
 }: WithExpressApp): Promise<WithExpressApp> => {
-  app.post("/authz/*", (_req, res, _next) => {
-    res.sendStatus(200);
+  const { services, product, secrets } = await bootstrapAuth(
+    localstackDynamoDbClientConfig,
+    true,
+  );
+  await authenticationEndpoint({
+    app,
+    services,
+    product,
+    secrets,
   });
   return { app };
 };
@@ -34,6 +45,6 @@ const startExpressApp = async ({ app }: WithExpressApp) => {
 };
 
 createExpressApp()
-  .then(configureEndpoints)
+  .then(configureAuthz)
   .then(startExpressApp)
   .catch(console.error);
