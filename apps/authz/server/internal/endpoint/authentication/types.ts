@@ -1,26 +1,17 @@
 import { Express } from "express";
 import { SessionData } from "express-session";
 
-import { IAuthSessionService } from "../../service/session-service";
+import { ISecretService, IAuthSessionService } from "../../service";
 
 interface AuthenticationEndpointProps {
   app: Express;
   services: {
     authSession: IAuthSessionService<SessionData>;
+    secret: ISecretService;
   };
   product: {
     gatewayUrl: string;
     baseUrl: string;
-  };
-  secrets: {
-    google: {
-      clientID: string;
-      clientSecret: string;
-    };
-    github: {
-      clientID: string;
-      clientSecret: string;
-    };
   };
 }
 

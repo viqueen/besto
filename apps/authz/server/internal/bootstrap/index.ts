@@ -3,27 +3,20 @@ import { SessionData } from "express-session";
 
 import { authAccess, AuthDynamoDbClients } from "../data";
 import {
+  ISecretService,
   AuthSessionService,
   IAuthSessionService,
-} from "../service/session-service";
+  DotEnvSecretService,
+} from "../service";
 
 interface AuthBootstrap {
   product: {
     baseUrl: string;
     gatewayUrl: string;
   };
-  secrets: {
-    google: {
-      clientID: string;
-      clientSecret: string;
-    };
-    github: {
-      clientID: string;
-      clientSecret: string;
-    };
-  };
   services: {
     authSession: IAuthSessionService<SessionData>;
+    secret: ISecretService;
   };
 }
 
@@ -38,21 +31,11 @@ const bootstrapAuth = async (
     gatewayUrl: "http://localhost:4000",
     baseUrl: "http://localhost:10000",
   };
-  const secrets = {
-    google: {
-      clientID: "google-client-id",
-      clientSecret: "google-client-secret",
-    },
-    github: {
-      clientID: "github-client-id",
-      clientSecret: "github-client-secret",
-    },
-  };
   return {
     product,
-    secrets,
     services: {
       authSession: new AuthSessionService(access),
+      secret: new DotEnvSecretService(),
     },
   };
 };

@@ -5,10 +5,10 @@ import { AuthenticationEndpointProps } from "./types";
 
 const googleAuthStrategy = async ({
   app,
-  secrets,
   product,
+  services,
 }: AuthenticationEndpointProps) => {
-  const { clientID, clientSecret } = secrets.google;
+  const { clientID, clientSecret } = await services.secret.google();
 
   const google = new GoogleStrategy(
     {

@@ -7,6 +7,7 @@ import morgan from "morgan";
 
 import { bootstrapAuth } from "../internal/bootstrap";
 import { apiEndpoint, authenticationEndpoint } from "../internal/endpoint";
+import { withPassportAuth } from "../internal/middleware";
 
 interface WithExpressApp {
   app: Express;
@@ -21,15 +22,15 @@ const createExpressApp = async (): Promise<WithExpressApp> => {
 const configureAuthz = async ({
   app,
 }: WithExpressApp): Promise<WithExpressApp> => {
-  const { services, product, secrets } = await bootstrapAuth(
+  const { services, product } = await bootstrapAuth(
     localstackDynamoDbClientConfig,
     true,
   );
+  await withPassportAuth({ app, services });
   await authenticationEndpoint({
     app,
     services,
     product,
-    secrets,
   });
   await apiEndpoint({ app });
   return { app };
@@ -49,6 +50,7 @@ const startExpressApp = async ({ app }: WithExpressApp) => {
 };
 
 dotenv.config({ path: path.resolve(__dirname, ".env.localstack") });
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 createExpressApp()
   .then(configureAuthz)
   .then(startExpressApp)

@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 
 import { claimTokenHandler } from "./claim-token-handler";
+import { githubAuthStrategy } from "./github-auth-strategy";
 import { googleAuthStrategy } from "./google-auth-strategy";
 import { AuthenticationEndpointProps } from "./types";
 
@@ -14,9 +15,9 @@ const authenticationEndpoint = async ({
   app,
   services,
   product,
-  secrets,
 }: AuthenticationEndpointProps) => {
-  await googleAuthStrategy({ app, services, secrets, product });
+  await githubAuthStrategy({ app, services, product });
+  await googleAuthStrategy({ app, services, product });
   app.post(`/authz/_claim/token`, claimTokenHandler());
   app.get(`/authz/_sign-out`, signOutHandler());
 };

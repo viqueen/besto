@@ -4,6 +4,7 @@ import session, { SessionData } from "express-session";
 import passport from "passport";
 import { uid } from "uid/secure";
 
+import { ISecretService } from "../../service";
 import { IAuthSessionService } from "../../service/session-service";
 
 import { AuthSessionStore } from "./auth-session-store";
@@ -33,25 +34,20 @@ interface WithPassportAuth {
   app: Express;
   services: {
     authSession: IAuthSessionService<SessionData>;
-  };
-  secrets: {
-    cookie: string;
+    secret: ISecretService;
   };
 }
 
-const withPassportAuth = async ({
-  app,
-  services,
-  secrets,
-}: WithPassportAuth) => {
+const withPassportAuth = async ({ app, services }: WithPassportAuth) => {
   const store = new AuthSessionStore(services.authSession);
+  const cookieSecret = await services.secret.cookie();
   app.use(
     json(),
     urlencoded({ extended: true }),
     session({
       genid: () => uid(32),
       name: `besto_platform`,
-      secret: secrets.cookie,
+      secret: cookieSecret,
       store,
       resave: false,
       saveUninitialized: true,
