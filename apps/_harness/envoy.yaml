@@ -26,19 +26,6 @@ static_resources:
                           expose_headers: "grpc-status,grpc-message"
                           allow_credentials: true
                           max_age: "1728000"
-                        envoy.filters.http.ext_authz:
-                          "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
-                          check_settings:
-                            context_extensions:
-                              key: value
-                          status_on_error:
-                            code: 403
-                            message: "Unauthorized"
-                          http_service:
-                            server_uri:
-                              uri: "http://host.docker.internal:4000/authz"
-                              cluster: authz_cluster
-                              timeout: 0.5s
                       routes:
                         - match: { prefix: "/" }
                           route: { cluster: service_cluster }
@@ -49,6 +36,13 @@ static_resources:
                 - name: envoy.filters.http.ext_authz
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+                    http_service:
+                      server_uri:
+                        uri: http://host.docker.internal:4000/authz
+                        cluster: authz_cluster
+                        timeout: 5s
+                      path_prefix: "/authz"
+                    failure_mode_allow: false
                 - name: envoy.grpc_web
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
@@ -60,11 +54,6 @@ static_resources:
     - name: authz_cluster
       connect_timeout: 0.25s
       type: LOGICAL_DNS
-      typed_extension_protocol_options:
-        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
-          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
-          explicit_http_config:
-            http2_protocol_options: { }
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: authz_cluster

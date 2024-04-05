@@ -14,7 +14,7 @@ const createExpressApp = async (): Promise<WithExpressApp> => {
 const configureEndpoints = async ({
   app,
 }: WithExpressApp): Promise<WithExpressApp> => {
-  app.get("/authz", (_req, res, _next) => {
+  app.post("/authz/*", (_req, res, _next) => {
     res.sendStatus(200);
   });
   return { app };
