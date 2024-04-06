@@ -4,12 +4,17 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import { Configuration, DefinePlugin } from "webpack";
 import { Configuration as DevConfiguration } from "webpack-dev-server";
 
-const authzGithubUrl = () => {
-  return "http://localhost:4000/authz/_github";
-};
+const authzUrl = `http://localhost:4000/authz`;
 
-const authzGoogleUrl = () => {
-  return "http://localhost:4000/authz/_google";
+const gateway = {
+  authzSignIn: {
+    google: `${authzUrl}/sign-in/_google`,
+    github: `${authzUrl}/sign-in/_github`,
+  },
+  authzSignUp: {
+    google: `${authzUrl}/sign-up/_google`,
+    github: `${authzUrl}/sign-up/_github`,
+  },
 };
 
 const config: Configuration & DevConfiguration = {
@@ -40,10 +45,7 @@ const config: Configuration & DevConfiguration = {
   },
   plugins: [
     new DefinePlugin({
-      __GATEWAY__: JSON.stringify({
-        authzGoogleUrl: authzGoogleUrl(),
-        authzGithubUrl: authzGithubUrl(),
-      }),
+      __GATEWAY__: JSON.stringify(gateway),
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "web", "entry", "index.html"),

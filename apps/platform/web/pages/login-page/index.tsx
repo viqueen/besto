@@ -3,7 +3,7 @@ import React from "react";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Avatar, Box, Button, Container, Stack } from "@mui/material";
+import { Avatar, Box, Button, Container, Divider, Stack } from "@mui/material";
 
 import { gateway } from "../../components";
 
@@ -22,19 +22,21 @@ const LoginPage = () => {
             <LockOutlinedIcon />
           </Avatar>
         </Box>
-        <Button
-          variant="outlined"
-          startIcon={<GoogleIcon />}
-          href={gateway.authzGoogleUrl}
-        >
-          Continue with google
-        </Button>
+        <Divider textAlign="center">Sign In</Divider>
         <Button
           variant="outlined"
           startIcon={<GitHubIcon />}
-          href={gateway.authzGithubUrl}
+          href={gateway.authzSignIn.github}
         >
-          Continue with github
+          with github
+        </Button>
+        <Divider textAlign="center">or Sign Up</Divider>
+        <Button
+          variant="outlined"
+          startIcon={<GitHubIcon />}
+          href={gateway.authzSignUp.github}
+        >
+          with github
         </Button>
       </Stack>
     </Container>

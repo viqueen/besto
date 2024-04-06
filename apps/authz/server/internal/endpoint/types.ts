@@ -1,9 +1,9 @@
 import { Express } from "express";
 import { SessionData } from "express-session";
 
-import { ISecretService, IAuthSessionService } from "../../service";
+import { IAuthSessionService, ISecretService } from "../service";
 
-interface AuthenticationEndpointProps {
+interface AuthZEndpointProps {
   app: Express;
   services: {
     authSession: IAuthSessionService<SessionData>;
@@ -15,4 +15,4 @@ interface AuthenticationEndpointProps {
   };
 }
 
-export type { AuthenticationEndpointProps };
+export type { AuthZEndpointProps };

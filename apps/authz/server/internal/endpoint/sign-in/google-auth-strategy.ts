@@ -1,13 +1,13 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
-import { AuthenticationEndpointProps } from "./types";
+import { AuthZEndpointProps } from "../types";
 
 const googleAuthStrategy = async ({
   app,
   product,
   services,
-}: AuthenticationEndpointProps) => {
+}: AuthZEndpointProps) => {
   const { clientID, clientSecret } = await services.secret.google();
 
   const google = new GoogleStrategy(
@@ -15,13 +15,13 @@ const googleAuthStrategy = async ({
       clientID,
       clientSecret,
       scope: ["profile"],
-      callbackURL: `${product.gatewayUrl}/authz/_google/callback`,
+      callbackURL: `${product.gatewayUrl}/authz/sign-in/_google/callback`,
     },
     (_token, _refresh, _profile, _done) => {},
   );
 
   app.get(
-    `/authz/_google`,
+    `/authz/sign-in/_google`,
     passport.authenticate(google, {
       failureRedirect: product.baseUrl,
       keepSessionInfo: true,
@@ -29,7 +29,7 @@ const googleAuthStrategy = async ({
   );
 
   app.get(
-    `/authz/_google/callback`,
+    `/authz/sing-in/_google/callback`,
     passport.authenticate(google, {
       failureRedirect: product.baseUrl,
       keepSessionInfo: true,

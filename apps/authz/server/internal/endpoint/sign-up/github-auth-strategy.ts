@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 
-import { AuthenticationEndpointProps } from "./types";
+import { AuthZEndpointProps } from "../types";
 
 type VerifyCallback = (
   err?: string | Error | null,
@@ -17,14 +17,14 @@ const githubAuthStrategy = async ({
   app,
   product,
   services,
-}: AuthenticationEndpointProps) => {
+}: AuthZEndpointProps) => {
   const { clientID, clientSecret } = await services.secret.github();
 
   const github = new GitHubStrategy(
     {
       clientID,
       clientSecret,
-      callbackURL: `${product.gatewayUrl}/authz/_github/callback`,
+      callbackURL: `${product.gatewayUrl}/authz/sign-up/_github/callback`,
     },
     (
       _token: string,
@@ -35,7 +35,7 @@ const githubAuthStrategy = async ({
   );
 
   app.get(
-    `/authz/_github`,
+    `/authz/sign-up/_github`,
     passport.authenticate(github, {
       failureRedirect: product.baseUrl,
       keepSessionInfo: true,
@@ -43,7 +43,7 @@ const githubAuthStrategy = async ({
   );
 
   app.get(
-    `/authz/_github/callback`,
+    `/authz/sign-up/_github/callback`,
     passport.authenticate(github, {
       failureRedirect: product.baseUrl,
       keepSessionInfo: true,

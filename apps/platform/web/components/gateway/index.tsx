@@ -1,6 +1,12 @@
 interface Gateway {
-  authzGoogleUrl: string;
-  authzGithubUrl: string;
+  authzSignIn: {
+    google: string;
+    github: string;
+  };
+  authzSignUp: {
+    google: string;
+    github: string;
+  };
 }
 
 declare const __GATEWAY__: Gateway;

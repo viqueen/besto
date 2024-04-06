@@ -6,8 +6,11 @@ import express, { Express } from "express";
 import morgan from "morgan";
 
 import { bootstrapAuth } from "../internal/bootstrap";
-import { apiEndpoint, authenticationEndpoint } from "../internal/endpoint";
-import { withPassportAuth } from "../internal/middleware";
+import {
+  apiEndpoint,
+  signInEndpoint,
+  signUpEndpoint,
+} from "../internal/endpoint";
 
 interface WithExpressApp {
   app: Express;
@@ -26,7 +29,8 @@ const configureAuthz = async ({
     localstackDynamoDbClientConfig,
     true,
   );
-  await authenticationEndpoint({
+  await signUpEndpoint({ app, services, product });
+  await signInEndpoint({
     app,
     services,
     product,
