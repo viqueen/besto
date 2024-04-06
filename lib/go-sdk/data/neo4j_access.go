@@ -6,7 +6,6 @@ import (
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
 	"github.com/viqueen/besto/lib/go-sdk/slices"
-	"golang.org/x/exp/maps"
 	"strings"
 )
 
@@ -103,14 +102,19 @@ type EntityRelationMapper struct {
 	relationTargetId uuid.UUID
 }
 
+type EntityNode struct {
+	node         neo4jclient.Node
+	relationship *neo4jclient.Relationship
+}
+
 // EntityNeo4jWriter is a concrete implementation of the EntityWriter interface for Neo4j.
 type EntityNeo4jWriter[ENTITY interface{}] struct {
 	EntityWriter[ENTITY]
 	client *neo4jclient.Neo4jClient
 
-	entityName   string
-	entityFields []string
-	entityMapper func(entity *ENTITY) EntityRelationMapper
+	entityName       string
+	entityFields     []string
+	entityNodeMapper func(entity *ENTITY) EntityNode
 }
 
 // NewEntityNeo4jWriter creates a new instance of EntityNeo4jWriter.
@@ -118,38 +122,26 @@ func NewEntityNeo4jWriter[ENTITY interface{}](
 	client *neo4jclient.Neo4jClient,
 	entityName string,
 	entityFields []string,
-	entityMapper func(entity *ENTITY) EntityRelationMapper,
+	entityNodeMapper func(entity *ENTITY) EntityNode,
 ) *EntityNeo4jWriter[ENTITY] {
 	return &EntityNeo4jWriter[ENTITY]{
-		client:       client,
-		entityName:   entityName,
-		entityFields: entityFields,
-		entityMapper: entityMapper,
+		client:           client,
+		entityName:       entityName,
+		entityFields:     entityFields,
+		entityNodeMapper: entityNodeMapper,
 	}
 }
 
 // CreateOne creates a single entity in Neo4j.
 func (w *EntityNeo4jWriter[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error) {
-	mapper := w.entityMapper(entity)
-
-	fieldNames := maps.Keys(mapper.entityParams)
-	fields := slices.Map(fieldNames, func(field string) string {
-		return fmt.Sprintf("%s: $%s", field, field)
-	})
-	joinedFields := strings.Join(fields, ", ")
-
-	relation := ""
-	if mapper.relation != "" {
-		relationFieldNames := maps.Keys(mapper.relationParams)
-		relationFields := slices.Map(relationFieldNames, func(field string) string {
-			return fmt.Sprintf("%s: $%s", field, field)
-		})
-		joinedRelationFields := strings.Join(relationFields, ", ")
-		relation = fmt.Sprintf("-[r:%s {%s}]->(target:%s {id: $targetID})", mapper.relation, joinedRelationFields, mapper.relationTarget)
+	mapper := w.entityNodeMapper(entity)
+	qb := neo4jclient.NewQueryBuilder()
+	qb = qb.CreateNode(mapper.node)
+	if mapper.relationship != nil {
+		qb = qb.WithRelationship(*mapper.relationship)
 	}
-
-	query := fmt.Sprintf("CREATE (t:%s {%s})%s", w.entityName, joinedFields, relation)
-	err := w.client.ExecuteWriteQuery(query, mapper.entityParams)
+	query := qb.BuildQuery()
+	err := w.client.ExecuteWriteQuery(query.Statement, query.Params)
 
 	if err != nil {
 		return nil, err

@@ -22,8 +22,8 @@ type Relationship struct {
 }
 
 type Query struct {
-	statement string
-	params    map[string]interface{}
+	Statement string
+	Params    map[string]interface{}
 }
 
 type QueryBuilder interface {
@@ -32,13 +32,19 @@ type QueryBuilder interface {
 	BuildQuery() Query
 }
 
-type SimpleQueryBuilder struct {
+type queryBuilder struct {
 	createStatement   string
 	relationStatement string
 	params            map[string]interface{}
 }
 
-func (q SimpleQueryBuilder) CreateNode(node Node) QueryBuilder {
+func NewQueryBuilder() QueryBuilder {
+	return queryBuilder{
+		params: make(map[string]interface{}),
+	}
+}
+
+func (q queryBuilder) CreateNode(node Node) QueryBuilder {
 	labels := strings.Join(node.Labels, ":")
 	fieldNames := maps.Keys(node.Props)
 	fields := slices.Map(fieldNames, func(field string) string {
@@ -50,7 +56,7 @@ func (q SimpleQueryBuilder) CreateNode(node Node) QueryBuilder {
 	return q
 }
 
-func (q SimpleQueryBuilder) WithRelationship(relationship Relationship) QueryBuilder {
+func (q queryBuilder) WithRelationship(relationship Relationship) QueryBuilder {
 	fieldNames := maps.Keys(relationship.Props)
 	fields := slices.Map(fieldNames, func(field string) string {
 		return fmt.Sprintf("r.%s", field)
@@ -61,9 +67,9 @@ func (q SimpleQueryBuilder) WithRelationship(relationship Relationship) QueryBui
 	return q
 }
 
-func (q SimpleQueryBuilder) BuildQuery() Query {
+func (q queryBuilder) BuildQuery() Query {
 	return Query{
-		statement: fmt.Sprintf("%s%s", q.createStatement, q.relationStatement),
-		params:    q.params,
+		Statement: fmt.Sprintf("%s%s", q.createStatement, q.relationStatement),
+		Params:    q.params,
 	}
 }
