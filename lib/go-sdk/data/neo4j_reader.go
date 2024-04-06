@@ -60,7 +60,7 @@ func (r *EntityNeo4jReader[ENTITY]) ReadOne(id uuid.UUID) (*ENTITY, error) {
 // ReadMany reads multiple entities from Neo4j.
 func (r *EntityNeo4jReader[ENTITY]) ReadMany(params map[string]interface{}, pageInfo PageInfo) ([]*ENTITY, error) {
 	qb := neo4jclient.NewQueryBuilder()
-	qb = qb.MatchNode("t", neo4jclient.Node{Labels: []string{r.entityName}}).
+	qb = qb.MatchNode("t", neo4jclient.Node{Labels: []string{r.entityName}, Props: params}).
 		Return("t").
 		WithPagination(neo4jclient.Pagination{
 			Offset: pageInfo.PageOffset,
