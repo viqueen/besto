@@ -10,7 +10,7 @@ import (
 type QueryBuilder interface {
 	MatchNode(target string, node Node) QueryBuilder
 	CreateNode(target string, node Node) QueryBuilder
-	CreateRelationship(relationship Relationship) QueryBuilder
+	CreateRelationship(fromTarget string, relationship Relationship, toTarget string) QueryBuilder
 	Return(targets ...string) QueryBuilder
 	WithPagination(pagination Pagination) QueryBuilder
 	BuildQuery() Query
@@ -50,13 +50,13 @@ func (q queryBuilder) CreateNode(target string, node Node) QueryBuilder {
 	return q
 }
 
-func (q queryBuilder) CreateRelationship(relationship Relationship) QueryBuilder {
+func (q queryBuilder) CreateRelationship(from string, relationship Relationship, to string) QueryBuilder {
 	fieldNames := maps.Keys(relationship.Props)
 	fields := slices.Map(fieldNames, func(field string) string {
 		return fmt.Sprintf("r.%s", field)
 	})
 	joinedFields := strings.Join(fields, ", ")
-	q.statement += fmt.Sprintf("(%s)-[r:%s {%s}]->(%s)\n", relationship.From, relationship.Name, joinedFields, relationship.To)
+	q.statement += fmt.Sprintf("(%s)-[r:%s {%s}]->(%s)\n", from, relationship.Name, joinedFields, to)
 	return q
 }
 

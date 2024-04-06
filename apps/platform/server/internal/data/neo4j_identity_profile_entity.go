@@ -99,16 +99,17 @@ func stringToGoogleProfile(value string) (*identityV1.GoogleProfile, error) {
 }
 
 // --- WRITER ---
+
 func (r *Neo4jIdentityProfileEntity) Writer() libData.EntityWriter[identityV1.IdentityProfile] {
 	return libData.NewEntityNeo4jWriter[identityV1.IdentityProfile](
 		r.client,
 		r.entityName,
 		r.entityFields,
-		identityProfileNodeMapper,
+		identityProfileWriteCtx,
 	)
 }
 
-func identityProfileNodeMapper(entity *identityV1.IdentityProfile) libData.EntityNode {
+func identityProfileWriteCtx(entity *identityV1.IdentityProfile) libData.EntityWriteCtx {
 	var profile []byte
 	switch entity.GetProvider() {
 	case identityV1.IdentityProvider_GITHUB:
@@ -116,13 +117,15 @@ func identityProfileNodeMapper(entity *identityV1.IdentityProfile) libData.Entit
 	case identityV1.IdentityProvider_GOOGLE:
 		profile, _ = json.Marshal(entity.GetGoogle())
 	}
-	return libData.NewEntityNode(neo4jclient.Node{
-		Id:     uuid.FromStringOrNil(entity.Id),
-		Labels: []string{"IdentityProfile", entity.GetProvider().String()},
-		Props: map[string]interface{}{
-			"profile_id": entity.ProfileId,
-			"provider":   entity.Provider.String(),
-			"profile":    profile,
+	return libData.EntityWriteCtx{
+		Creates: &neo4jclient.Node{
+			Id:     uuid.FromStringOrNil(entity.Id),
+			Labels: []string{"IdentityProfile", entity.GetProvider().String()},
+			Props: map[string]interface{}{
+				"profile_id": entity.ProfileId,
+				"provider":   entity.Provider.String(),
+				"profile":    profile,
+			},
 		},
-	}, nil)
+	}
 }

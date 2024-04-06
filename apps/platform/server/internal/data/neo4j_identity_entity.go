@@ -6,6 +6,7 @@ import (
 	identityV1 "github.com/viqueen/besto/_api/go-sdk/platform/identity/v1"
 	libData "github.com/viqueen/besto/lib/go-sdk/data"
 	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
+	"time"
 )
 
 type Neo4jIdentityEntity struct {
@@ -46,27 +47,31 @@ func (r *Neo4jIdentityEntity) Writer() libData.EntityWriter[identityV1.Identity]
 		r.client,
 		r.entityName,
 		r.entityFields,
-		identityNodeMapper,
+		identityWriteCtx,
 	)
 }
 
-func identityNodeMapper(identity *identityV1.Identity) libData.EntityNode {
-	// TODO: handle multiple profiles
+func identityWriteCtx(identity *identityV1.Identity) libData.EntityWriteCtx {
 	profile := identity.GetProfiles()[0]
-	return libData.NewEntityNode(
-		neo4jclient.Node{
-			Id:     uuid.FromStringOrNil(identity.Id),
-			Labels: []string{"Identity"},
-			Props:  map[string]interface{}{},
-		},
-		&neo4jclient.Relationship{
-			Name: "HAS_PROFILE",
+	return libData.EntityWriteCtx{
+		Matches: &neo4jclient.Node{
+			Id:     uuid.FromStringOrNil(profile.GetId()),
+			Labels: []string{"IdentityProfile"},
 			Props: map[string]interface{}{
 				"profile_id": profile.GetProfileId(),
 				"provider":   profile.GetProvider(),
 			},
-			Target:   "IdentityProfile",
-			TargetID: uuid.FromStringOrNil(profile.GetId()),
 		},
-	)
+		Creates: &neo4jclient.Node{
+			Id:     uuid.FromStringOrNil(identity.Id),
+			Labels: []string{"Identity"},
+			Props:  map[string]interface{}{},
+		},
+		RelateCreatedToMatched: &neo4jclient.Relationship{
+			Name: "HAS_PROFILE",
+			Props: map[string]interface{}{
+				"linked_at": time.Now().Format(time.RFC3339),
+			},
+		},
+	}
 }

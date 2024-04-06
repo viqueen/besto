@@ -3,9 +3,10 @@ package data
 import neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
 
 type EntityWriteCtx struct {
-	matches *neo4jclient.Node
-	creates *neo4jclient.Node
-	relates *neo4jclient.Relationship
+	Matches                *neo4jclient.Node
+	Creates                *neo4jclient.Node
+	RelateCreatedToMatched *neo4jclient.Relationship
+	RelateMatchedToCreated *neo4jclient.Relationship
 }
 
 type EntityNode struct {
@@ -30,7 +31,7 @@ type EntityNeo4jWriter[ENTITY interface{}] struct {
 	entityWriteCtx func(entity *ENTITY) EntityWriteCtx
 }
 
-// NewEntityNeo4jWriter creates a new instance of EntityNeo4jWriter.
+// NewEntityNeo4jWriter Creates a new instance of EntityNeo4jWriter.
 func NewEntityNeo4jWriter[ENTITY interface{}](
 	client *neo4jclient.Neo4jClient,
 	entityName string,
@@ -45,25 +46,27 @@ func NewEntityNeo4jWriter[ENTITY interface{}](
 	}
 }
 
-// CreateOne creates a single entity in Neo4j.
+// CreateOne Creates a single entity in Neo4j.
 func (w *EntityNeo4jWriter[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error) {
 	writeCtx := w.entityWriteCtx(entity)
 	qb := neo4jclient.NewQueryBuilder()
 
-	if writeCtx.matches != nil {
-		qb = qb.MatchNode("m", *writeCtx.matches)
+	if writeCtx.Matches != nil {
+		qb = qb.MatchNode("m", *writeCtx.Matches)
 	}
 
-	if writeCtx.creates != nil {
-		qb = qb.CreateNode("c", *writeCtx.creates)
+	if writeCtx.Creates != nil {
+		qb = qb.CreateNode("c", *writeCtx.Creates)
 	}
 
-	if writeCtx.relates != nil {
-		qb = qb.CreateRelationship(*writeCtx.relates)
+	if writeCtx.Matches != nil && writeCtx.RelateCreatedToMatched != nil {
+		qb = qb.CreateRelationship("c", *writeCtx.RelateCreatedToMatched, "m")
+	} else if writeCtx.Matches != nil && writeCtx.RelateMatchedToCreated != nil {
+		qb = qb.CreateRelationship("m", *writeCtx.RelateMatchedToCreated, "c")
 	}
 
 	targets := []string{"c"}
-	if writeCtx.matches != nil {
+	if writeCtx.Matches != nil {
 		targets = append(targets, "m")
 	}
 

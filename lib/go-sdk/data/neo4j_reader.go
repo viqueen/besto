@@ -17,7 +17,7 @@ type EntityNeo4jReader[ENTITY interface{}] struct {
 	recordMapper func(record neo4j.Record) *ENTITY
 }
 
-// NewEntityNeo4jReader creates a new instance of EntityNeo4jReader.
+// NewEntityNeo4jReader Creates a new instance of EntityNeo4jReader.
 func NewEntityNeo4jReader[ENTITY interface{}](
 	client *neo4jclient.Neo4jClient,
 	entityName string,

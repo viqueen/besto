@@ -20,8 +20,6 @@ type Node struct {
 type Relationship struct {
 	Name  string
 	Props map[string]interface{}
-	From  string
-	To    string
 }
 
 type Query struct {
