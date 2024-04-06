@@ -11,7 +11,7 @@ service IdentityService {
 }
 
 message SignUpRequest {
-  IdentityProvider provider = 1;
+  IdentityProfile profile = 1;
 }
 
 message SignUpResponse {

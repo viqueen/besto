@@ -11,7 +11,7 @@ type PageInfo struct {
 // EntityReader defines the interface for reading operations from a data store.
 type EntityReader[ENTITY interface{}] interface {
 	ReadOne(id uuid.UUID) (*ENTITY, error)
-	ReadMany(pageInfo PageInfo) ([]*ENTITY, error)
+	ReadMany(params map[string]interface{}, pageInfo PageInfo) ([]*ENTITY, error)
 }
 
 // EntityWriter defines the interface for writing operations to a data store.

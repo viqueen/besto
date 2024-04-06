@@ -1,12 +1,14 @@
 package service
 
 import (
-	context "context"
+	"context"
 	"github.com/viqueen/besto/_api/go-sdk/platform/identity/v1"
+	"github.com/viqueen/besto/apps/platform/server/internal/data"
 )
 
 type IdentityService struct {
 	identityV1.UnimplementedIdentityServiceServer
+	Access *data.IdentityAccess
 }
 
 func NewIdentityService() *IdentityService {

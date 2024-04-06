@@ -5,16 +5,16 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
-import { Identity, IdentityProvider } from "./models_pb.js";
+import { Identity, IdentityProfile, IdentityProvider } from "./models_pb.js";
 
 /**
  * @generated from message SignUpRequest
  */
 export class SignUpRequest extends Message<SignUpRequest> {
   /**
-   * @generated from field: IdentityProvider provider = 1;
+   * @generated from field: IdentityProfile profile = 1;
    */
-  provider = IdentityProvider.UNSPECIFIED;
+  profile?: IdentityProfile;
 
   constructor(data?: PartialMessage<SignUpRequest>) {
     super();
@@ -24,7 +24,7 @@ export class SignUpRequest extends Message<SignUpRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "SignUpRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "provider", kind: "enum", T: proto3.getEnumType(IdentityProvider) },
+    { no: 1, name: "profile", kind: "message", T: IdentityProfile },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignUpRequest {

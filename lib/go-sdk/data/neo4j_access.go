@@ -62,14 +62,20 @@ func (r *EntityNeo4jReader[ENTITY]) ReadOne(id uuid.UUID) (*ENTITY, error) {
 }
 
 // ReadMany reads multiple entities from Neo4j.
-func (r *EntityNeo4jReader[ENTITY]) ReadMany(pageInfo PageInfo) ([]*ENTITY, error) {
+func (r *EntityNeo4jReader[ENTITY]) ReadMany(params map[string]interface{}, pageInfo PageInfo) ([]*ENTITY, error) {
 	fields := slices.Map(r.entityFields, func(field string) string {
 		return fmt.Sprintf("t.%s", field)
 	})
-	joined := strings.Join(fields, ", ")
-	query := fmt.Sprintf("MATCH (t:%s) RETURN %s SKIP %d LIMIT %d",
+	joinedFields := strings.Join(fields, ", ")
+	filters := make([]string, len(params))
+	for key, _ := range params {
+		filters = append(filters, fmt.Sprintf("%s = $%s", key, key))
+	}
+	joinedFilers := strings.Join(filters, ", ")
+	query := fmt.Sprintf("MATCH (t:%s {%s}) RETURN %s SKIP %d LIMIT %d",
 		r.entityName,
-		joined,
+		joinedFilers,
+		joinedFields,
 		pageInfo.PageOffset,
 		pageInfo.PageSize,
 	)
