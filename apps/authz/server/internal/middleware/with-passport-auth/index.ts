@@ -1,4 +1,4 @@
-import { IdentityProvider } from "@besto/api-node-sdk";
+import { Identity } from "@besto/api-node-sdk";
 import { Express, json, RequestHandler, urlencoded } from "express";
 import session, { SessionData } from "express-session";
 import passport from "passport";
@@ -13,10 +13,7 @@ declare global {
   namespace Express {
     // noinspection JSUnusedGlobalSymbols
     interface User {
-      identity: {
-        provider: IdentityProvider;
-        profileId: string;
-      };
+      identity: Identity;
     }
   }
 }

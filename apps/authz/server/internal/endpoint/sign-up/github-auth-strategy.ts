@@ -1,3 +1,4 @@
+import { IdentityProfile, IdentityProvider } from "@besto/api-node-sdk";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 
@@ -27,11 +28,26 @@ const githubAuthStrategy = async ({
       callbackURL: `${product.gatewayUrl}/authz/sign-up/_github/callback`,
     },
     (
-      _token: string,
-      _refresh: string,
-      _profile: Profile,
-      _done: VerifyCallback,
-    ) => {},
+      token: string,
+      refresh: string,
+      profile: Profile,
+      done: VerifyCallback,
+    ) => {
+      services.identity
+        .signUp(
+          new IdentityProfile({
+            provider: IdentityProvider.GITHUB,
+            profile_id: profile.id,
+            profile_email: profile.emails?.[0].value,
+          }),
+        )
+        .then((response) => {
+          done(null, { identity: response });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    },
   );
 
   app.get(

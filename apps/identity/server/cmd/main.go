@@ -4,7 +4,6 @@ import (
 	"fmt"
 	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/viqueen/besto/apps/identity/server/export"
-	"github.com/viqueen/besto/apps/identity/server/internal/interceptor"
 	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -13,7 +12,7 @@ import (
 )
 
 func main() {
-	address := 50051
+	address := 40041
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", address))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -31,7 +30,6 @@ func main() {
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			grpczap.UnaryServerInterceptor(zapLogger),
-			interceptor.UnaryAuthInterceptor,
 		),
 		grpc.ChainStreamInterceptor(),
 	)
