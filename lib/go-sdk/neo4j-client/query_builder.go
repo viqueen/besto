@@ -9,6 +9,7 @@ import (
 
 type QueryBuilder interface {
 	MatchNode(target string, node Node) QueryBuilder
+	MatchRelationship(fromTarget string, relation Relationship, toTarget string) QueryBuilder
 	CreateNode(target string, node Node) QueryBuilder
 	CreateRelationship(fromTarget string, relationship Relationship, toTarget string) QueryBuilder
 	Return(targets ...string) QueryBuilder
@@ -44,6 +45,16 @@ func (q queryBuilder) MatchNode(target string, node Node) QueryBuilder {
 
 	filter := strings.Join(fieldNames, ", ")
 	q.statement += fmt.Sprintf("MATCH (%s:%s {%s})\n", target, labels, filter)
+	return q
+}
+
+func (q queryBuilder) MatchRelationship(fromTarget string, relation Relationship, toTarget string) QueryBuilder {
+	fieldNames := maps.Keys(relation.Props)
+	fields := slices.Map(fieldNames, func(field string) string {
+		return fmt.Sprintf("r.%s", field)
+	})
+	joinedFields := strings.Join(fields, ", ")
+	q.statement += fmt.Sprintf("MATCH (%s)-[r:%s {%s}]->(%s)\n", fromTarget, relation.Name, joinedFields, toTarget)
 	return q
 }
 

@@ -31,8 +31,26 @@ func (r *Neo4jIdentityProfileEntity) Reader() libData.EntityReader[identityV1.Id
 		r.client,
 		r.entityName,
 		r.entityFields,
+		identityProfileReadCtx,
 		recordToIdentityProfile,
 	)
+}
+
+func identityProfileReadCtx(entity *identityV1.IdentityProfile) libData.EntityReadCtx {
+	props := make(map[string]interface{})
+	if entity.GetProfileId() != "" {
+		props["profile_id"] = entity.ProfileId
+	}
+	if entity.GetProvider() != identityV1.IdentityProvider_UNSPECIFIED {
+		props["provider"] = entity.Provider.String()
+	}
+	return libData.EntityReadCtx{
+		From: &neo4jclient.Node{
+			Id:     uuid.FromStringOrNil(entity.Id),
+			Labels: []string{"IdentityProfile", entity.Provider.String()},
+			Props:  props,
+		},
+	}
 }
 
 func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {

@@ -262,9 +262,9 @@ export class Identity extends Message<Identity> {
   id = "";
 
   /**
-   * @generated from field: repeated IdentityProfile profiles = 4;
+   * @generated from field: IdentityProfile profile = 2;
    */
-  profiles: IdentityProfile[] = [];
+  profile?: IdentityProfile;
 
   constructor(data?: PartialMessage<Identity>) {
     super();
@@ -275,7 +275,7 @@ export class Identity extends Message<Identity> {
   static readonly typeName = "Identity";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "profiles", kind: "message", T: IdentityProfile, repeated: true },
+    { no: 2, name: "profile", kind: "message", T: IdentityProfile },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Identity {

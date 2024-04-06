@@ -41,5 +41,5 @@ message IdentityProfile {
 
 message Identity {
   string id = 1;
-  repeated IdentityProfile profiles = 4;
+  IdentityProfile profile = 2;
 }

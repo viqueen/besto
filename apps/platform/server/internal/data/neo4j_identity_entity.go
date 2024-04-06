@@ -30,8 +30,34 @@ func (r *Neo4jIdentityEntity) Reader() libData.EntityReader[identityV1.Identity]
 		r.client,
 		r.entityName,
 		r.entityFields,
+		identityReadCtx,
 		recordToIdentity,
 	)
+}
+
+func identityReadCtx(identity *identityV1.Identity) libData.EntityReadCtx {
+	profile := identity.GetProfile()
+	if profile == nil {
+		return libData.EntityReadCtx{
+			From: &neo4jclient.Node{
+				Id:     uuid.FromStringOrNil(identity.Id),
+				Labels: []string{"Identity"},
+				Props:  map[string]interface{}{},
+			},
+		}
+	}
+	profileReadCtx := identityProfileReadCtx(profile)
+	return libData.EntityReadCtx{
+		From: &neo4jclient.Node{
+			Id:     uuid.FromStringOrNil(identity.Id),
+			Labels: []string{"Identity"},
+			Props:  map[string]interface{}{},
+		},
+		To: profileReadCtx.From,
+		Relationship: &neo4jclient.Relationship{
+			Name: "HAS_PROFILE",
+		},
+	}
 }
 
 func recordToIdentity(record neo4j.Record) *identityV1.Identity {
@@ -52,7 +78,7 @@ func (r *Neo4jIdentityEntity) Writer() libData.EntityWriter[identityV1.Identity]
 }
 
 func identityWriteCtx(identity *identityV1.Identity) libData.EntityWriteCtx {
-	profile := identity.GetProfiles()[0]
+	profile := identity.GetProfile()
 	return libData.EntityWriteCtx{
 		Matches: &neo4jclient.Node{
 			Id:     uuid.FromStringOrNil(profile.GetId()),
