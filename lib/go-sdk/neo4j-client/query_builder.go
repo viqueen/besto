@@ -30,8 +30,20 @@ func NewQueryBuilder() QueryBuilder {
 
 func (q queryBuilder) MatchNode(target string, node Node) QueryBuilder {
 	labels := strings.Join(node.Labels, ":")
-	q.statement += fmt.Sprintf("MATCH (%s:%s {id: $%s_id})\n", target, labels, target)
-	q.params[fmt.Sprintf("%s_id", target)] = node.Id.String()
+	var fieldNames []string
+
+	if !node.Id.IsNil() {
+		fieldNames = append(fieldNames, fmt.Sprintf("id: $%s_id", target))
+		q.params[fmt.Sprintf("%s_id")] = node.Id.String()
+	}
+
+	for key, value := range node.Props {
+		fieldNames = append(fieldNames, fmt.Sprintf("%s: $%s_%s", key, target, key))
+		q.params[fmt.Sprintf("%s_%s", target, key)] = value
+	}
+
+	filter := strings.Join(fieldNames, ", ")
+	q.statement += fmt.Sprintf("MATCH (%s:%s {%s})\n", target, labels, filter)
 	return q
 }
 
