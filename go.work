@@ -4,7 +4,7 @@ use (
 	./_api/go-sdk
 	./_schema
 	./apps/_harness
-	./apps/platform
+	./apps/identity/v1
 	./lib/go-sdk/arch-unit
 	./lib/go-sdk/data
 	./lib/go-sdk/neo4j-client
