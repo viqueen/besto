@@ -38,14 +38,20 @@ func (i IdentityService) SignIn(_ context.Context, request *identityV1.SignInReq
 		return nil, status.Errorf(codes.PermissionDenied, "identity profile not permitted")
 	}
 
-	// TODO: we need to look up identity by profile
-	identity, err := i.access.Identity.Reader.ReadOne(uuid.Must(uuid.NewV4()))
+	identities, err := i.access.Identity.Reader.Filter(&identityV1.Identity{
+		Profile: entities[0],
+	})
+
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to read identity: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to filter identity: %v", err)
+	}
+
+	if len(identities) == 0 {
+		return nil, status.Errorf(codes.PermissionDenied, "identity not permitted")
 	}
 
 	return &identityV1.SignInResponse{
-		Identity: identity,
+		Identity: identities[0],
 	}, nil
 }
 
@@ -73,10 +79,8 @@ func (i IdentityService) SignUp(_ context.Context, request *identityV1.SignUpReq
 	}
 
 	identity, err := i.access.Identity.Writer.CreateOne(&identityV1.Identity{
-		Id: uuid.Must(uuid.NewV4()).String(),
-		Profiles: []*identityV1.IdentityProfile{
-			createdProfile,
-		},
+		Id:      uuid.Must(uuid.NewV4()).String(),
+		Profile: createdProfile,
 	})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create identity: %v", err)
