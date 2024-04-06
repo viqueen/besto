@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/viqueen/besto/apps/platform/server/export"
 	"github.com/viqueen/besto/apps/platform/server/internal/interceptor"
+	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"log"
@@ -21,15 +22,21 @@ func main() {
 	zapLogger, _ := zap.NewDevelopment()
 	defer zapLogger.Sync()
 
+	// Create a new instance of a Neo4j client
+	neo4jClient, err := neo4jclient.NewLocalNeo4jClient()
+	if err != nil {
+		log.Fatalf("failed to create neo4j client : %v", err)
+	}
+
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			grpc_zap.UnaryServerInterceptor(zapLogger),
+			grpczap.UnaryServerInterceptor(zapLogger),
 			interceptor.UnaryAuthInterceptor,
 		),
 		grpc.ChainStreamInterceptor(),
 	)
 
-	export.Bundle(server)
+	export.Bundle(server, neo4jClient)
 
 	log.Printf("platform grpc server running on port %d", address)
 	if serveErr := server.Serve(listener); serveErr != nil {

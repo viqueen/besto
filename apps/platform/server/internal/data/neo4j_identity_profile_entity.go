@@ -9,21 +9,21 @@ import (
 	"strings"
 )
 
-type Neo4jIdentityProfile struct {
+type Neo4jIdentityProfileEntity struct {
 	entityName   string
 	entityFields []string
 	client       *neo4jclient.Neo4jClient
 }
 
-func NewNeo4jIdentityProfile(client *neo4jclient.Neo4jClient) *Neo4jIdentityProfile {
-	return &Neo4jIdentityProfile{
+func NewNeo4jIdentityProfileEntity(client *neo4jclient.Neo4jClient) *Neo4jIdentityProfileEntity {
+	return &Neo4jIdentityProfileEntity{
 		entityName:   "IdentityProfile",
 		entityFields: []string{"id", "profile_id", "provider", "profile"},
 		client:       client,
 	}
 }
 
-func (r *Neo4jIdentityProfile) Reader() libData.EntityReader[identityV1.IdentityProfile] {
+func (r *Neo4jIdentityProfileEntity) Reader() libData.EntityReader[identityV1.IdentityProfile] {
 	return libData.NewEntityNeo4jReader[identityV1.IdentityProfile](
 		r.client,
 		r.entityName,
@@ -32,7 +32,7 @@ func (r *Neo4jIdentityProfile) Reader() libData.EntityReader[identityV1.Identity
 	)
 }
 
-func (r *Neo4jIdentityProfile) Writer() libData.EntityWriter[identityV1.IdentityProfile] {
+func (r *Neo4jIdentityProfileEntity) Writer() libData.EntityWriter[identityV1.IdentityProfile] {
 	return libData.NewEntityNeo4jWriter[identityV1.IdentityProfile](
 		r.client,
 		r.entityName,

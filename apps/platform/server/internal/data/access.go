@@ -6,5 +6,6 @@ import (
 )
 
 type IdentityAccess struct {
+	Identity        *libData.EntityAccess[identityV1.Identity]
 	IdentityProfile *libData.EntityAccess[identityV1.IdentityProfile]
 }

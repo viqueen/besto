@@ -8,11 +8,17 @@ import (
 
 type IdentityService struct {
 	identityV1.UnimplementedIdentityServiceServer
+	access *data.IdentityAccess
+}
+
+type IdentityServiceConfig struct {
 	Access *data.IdentityAccess
 }
 
-func NewIdentityService() *IdentityService {
-	return &IdentityService{}
+func NewIdentityService(config IdentityServiceConfig) *IdentityService {
+	return &IdentityService{
+		access: config.Access,
+	}
 }
 
 func (i IdentityService) SignIn(ctx context.Context, request *identityV1.SignInRequest) (*identityV1.SignInResponse, error) {
