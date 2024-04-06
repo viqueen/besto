@@ -7,6 +7,8 @@ import {
   AuthSessionService,
   IAuthSessionService,
   DotEnvSecretService,
+  IIdentityService,
+  IdentityService,
 } from "../service";
 
 interface AuthBootstrap {
@@ -16,6 +18,7 @@ interface AuthBootstrap {
   };
   services: {
     authSession: IAuthSessionService<SessionData>;
+    identity: IIdentityService;
     secret: ISecretService;
   };
 }
@@ -35,6 +38,7 @@ const bootstrapAuth = async (
     product,
     services: {
       authSession: new AuthSessionService(access),
+      identity: new IdentityService(),
       secret: new DotEnvSecretService(),
     },
   };
