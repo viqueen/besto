@@ -6,6 +6,7 @@ import (
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
 	"github.com/viqueen/besto/lib/go-sdk/slices"
+	"golang.org/x/exp/maps"
 	"strings"
 )
 
@@ -94,6 +95,14 @@ func (r *EntityNeo4jReader[ENTITY]) ReadMany(params map[string]interface{}, page
 	return entities, nil
 }
 
+type EntityRelationMapper struct {
+	entityParams     map[string]interface{}
+	relation         string
+	relationParams   map[string]interface{}
+	relationTarget   string
+	relationTargetId uuid.UUID
+}
+
 // EntityNeo4jWriter is a concrete implementation of the EntityWriter interface for Neo4j.
 type EntityNeo4jWriter[ENTITY interface{}] struct {
 	EntityWriter[ENTITY]
@@ -101,7 +110,7 @@ type EntityNeo4jWriter[ENTITY interface{}] struct {
 
 	entityName   string
 	entityFields []string
-	paramsMapper func(entity *ENTITY) map[string]interface{}
+	entityMapper func(entity *ENTITY) EntityRelationMapper
 }
 
 // NewEntityNeo4jWriter creates a new instance of EntityNeo4jWriter.
@@ -109,25 +118,38 @@ func NewEntityNeo4jWriter[ENTITY interface{}](
 	client *neo4jclient.Neo4jClient,
 	entityName string,
 	entityFields []string,
-	paramsMapper func(entity *ENTITY) map[string]interface{},
+	entityMapper func(entity *ENTITY) EntityRelationMapper,
 ) *EntityNeo4jWriter[ENTITY] {
 	return &EntityNeo4jWriter[ENTITY]{
 		client:       client,
 		entityName:   entityName,
 		entityFields: entityFields,
-		paramsMapper: paramsMapper,
+		entityMapper: entityMapper,
 	}
 }
 
 // CreateOne creates a single entity in Neo4j.
 func (w *EntityNeo4jWriter[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error) {
-	fields := slices.Map(w.entityFields, func(field string) string {
+	mapper := w.entityMapper(entity)
+
+	fieldNames := maps.Keys(mapper.entityParams)
+	fields := slices.Map(fieldNames, func(field string) string {
 		return fmt.Sprintf("%s: $%s", field, field)
 	})
-	joined := strings.Join(fields, ", ")
-	query := fmt.Sprintf("CREATE (t:%s {%s})", w.entityName, joined)
-	params := w.paramsMapper(entity)
-	err := w.client.ExecuteWriteQuery(query, params)
+	joinedFields := strings.Join(fields, ", ")
+
+	relation := ""
+	if mapper.relation != "" {
+		relationFieldNames := maps.Keys(mapper.relationParams)
+		relationFields := slices.Map(relationFieldNames, func(field string) string {
+			return fmt.Sprintf("%s: $%s", field, field)
+		})
+		joinedRelationFields := strings.Join(relationFields, ", ")
+		relation = fmt.Sprintf("-[r:%s {%s}]->(target:%s {id: $targetID})", mapper.relation, joinedRelationFields, mapper.relationTarget)
+	}
+
+	query := fmt.Sprintf("CREATE (t:%s {%s})%s", w.entityName, joinedFields, relation)
+	err := w.client.ExecuteWriteQuery(query, mapper.entityParams)
 
 	if err != nil {
 		return nil, err
