@@ -5,6 +5,7 @@ use (
 	./_schema
 	./apps/_harness
 	./apps/identity
+	./apps/platform
 	./lib/go-sdk/arch-unit
 	./lib/go-sdk/data
 	./lib/go-sdk/neo4j-client

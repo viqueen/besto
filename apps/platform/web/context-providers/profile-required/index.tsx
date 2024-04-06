@@ -11,7 +11,7 @@ const IdentityContext = createContext<{ identity: Identity }>({
   identity: {} as Identity,
 });
 
-const IdentityProvider = ({
+const ProfileProvider = ({
   children,
   identity,
 }: PropsWithChildren<{ identity: Identity }>) => {
@@ -24,12 +24,12 @@ const IdentityProvider = ({
 
 const useIdentity = () => useContext(IdentityContext);
 
-const IdentityRequired = ({ children }: PropsWithChildren) => {
-  const { identityClient } = useConnectApi();
+const ProfileRequired = ({ children }: PropsWithChildren) => {
+  const { profileClient } = useConnectApi();
   const { data, error, isLoading } = useQuery(
-    "getIdentity",
+    "getProfile",
     async () => {
-      return await identityClient.getIdentity({});
+      return await profileClient.getProfile({});
     },
     {
       // TODO: fix retry logic when the error is a 5xx error
@@ -40,12 +40,16 @@ const IdentityRequired = ({ children }: PropsWithChildren) => {
   return (
     <>
       {isLoading && <CircularProgress color="secondary" />}
-      {!isLoading && (!data?.identity || error) && <Navigate to="/login" />}
-      {!isLoading && data?.identity && !error && (
-        <IdentityProvider identity={data.identity}>{children}</IdentityProvider>
+      {!isLoading && (!data?.profile?.identity || error) && (
+        <Navigate to="/login" />
+      )}
+      {!isLoading && data?.profile?.identity && !error && (
+        <ProfileProvider identity={data.profile.identity}>
+          {children}
+        </ProfileProvider>
       )}
     </>
   );
 };
 
-export { IdentityRequired, IdentityProvider, useIdentity };
+export { ProfileRequired, ProfileProvider, useIdentity };

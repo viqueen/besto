@@ -1,5 +1,5 @@
 {
-  "name": "@besto/identity-v1",
+  "name": "@besto/identity",
   "version": "1.0.0",
   "private": true,
   "scripts": {

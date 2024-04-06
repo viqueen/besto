@@ -4,7 +4,7 @@ import {
   IdentityServiceClient,
   SignUpRequest,
 } from "@besto/api-node-sdk";
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 
 interface IIdentityService {
   signUp: (profile: IdentityProfile) => Promise<Identity>;

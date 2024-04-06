@@ -1,14 +1,14 @@
 import React from "react";
 
-import { IdentityRequired } from "../../context-providers";
+import { ProfileRequired } from "../../context-providers";
 
 const DashboardPage = () => {
   return (
-    <IdentityRequired>
+    <ProfileRequired>
       <div>
         <h1>Dashboard page</h1>
       </div>
-    </IdentityRequired>
+    </ProfileRequired>
   );
 };
 

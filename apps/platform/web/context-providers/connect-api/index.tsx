@@ -1,17 +1,17 @@
 import React, { createContext, PropsWithChildren, useContext } from "react";
 
-import { IdentityService } from "@besto/api-web-sdk";
+import { ProfileService } from "@besto/api-web-sdk";
 import { createPromiseClient, PromiseClient } from "@connectrpc/connect";
 import { createGrpcWebTransport } from "@connectrpc/connect-web";
 
 import { loggingInterceptor } from "./interceptors";
 
 interface ConnectApi {
-  identityClient: PromiseClient<typeof IdentityService>;
+  profileClient: PromiseClient<typeof ProfileService>;
 }
 
 const ConnectApiContext = createContext<ConnectApi>({
-  identityClient: {} as PromiseClient<typeof IdentityService>,
+  profileClient: {} as PromiseClient<typeof ProfileService>,
 });
 
 const useConnectApi = () => useContext(ConnectApiContext);
@@ -23,10 +23,10 @@ const ConnectApiProvider = ({ children }: PropsWithChildren) => {
     interceptors: [loggingInterceptor()],
   });
 
-  const identityClient = createPromiseClient(IdentityService, transport);
+  const profileClient = createPromiseClient(ProfileService, transport);
 
   return (
-    <ConnectApiContext.Provider value={{ identityClient }}>
+    <ConnectApiContext.Provider value={{ profileClient }}>
       {children}
     </ConnectApiContext.Provider>
   );
