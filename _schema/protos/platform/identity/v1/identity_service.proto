@@ -5,16 +5,9 @@ option go_package = "github.com/viqueen/besto/_api/go-sdk/platform/identity/v1;i
 import "platform/identity/v1/models.proto";
 
 service IdentityService {
-  rpc GetIdentity(GetIdentityRequest) returns (GetIdentityResponse);
   rpc SignIn(SignInRequest) returns (SignInResponse);
   rpc SignUp(SignUpRequest) returns (SignUpResponse);
   rpc SignOut(SignOutRequest) returns (SignOutResponse);
-}
-
-message GetIdentityRequest {}
-
-message GetIdentityResponse {
-  Identity identity = 1;
 }
 
 message SignUpRequest {

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GetIdentityRequest, GetIdentityResponse, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, SignUpRequest, SignUpResponse } from "./identity_service_pb.js";
+import { SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, SignUpRequest, SignUpResponse } from "./identity_service_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -12,15 +12,6 @@ import { MethodKind } from "@bufbuild/protobuf";
 export const IdentityService = {
   typeName: "IdentityService",
   methods: {
-    /**
-     * @generated from rpc IdentityService.GetIdentity
-     */
-    getIdentity: {
-      name: "GetIdentity",
-      I: GetIdentityRequest,
-      O: GetIdentityResponse,
-      kind: MethodKind.Unary,
-    },
     /**
      * @generated from rpc IdentityService.SignIn
      */
