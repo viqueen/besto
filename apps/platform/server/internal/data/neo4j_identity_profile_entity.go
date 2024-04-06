@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"github.com/gofrs/uuid"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	identityV1 "github.com/viqueen/besto/_api/go-sdk/platform/identity/v1"
 	libData "github.com/viqueen/besto/lib/go-sdk/data"
@@ -23,21 +24,14 @@ func NewNeo4jIdentityProfileEntity(client *neo4jclient.Neo4jClient) *Neo4jIdenti
 	}
 }
 
+// --- READER ---
+
 func (r *Neo4jIdentityProfileEntity) Reader() libData.EntityReader[identityV1.IdentityProfile] {
 	return libData.NewEntityNeo4jReader[identityV1.IdentityProfile](
 		r.client,
 		r.entityName,
 		r.entityFields,
 		recordToIdentityProfile,
-	)
-}
-
-func (r *Neo4jIdentityProfileEntity) Writer() libData.EntityWriter[identityV1.IdentityProfile] {
-	return libData.NewEntityNeo4jWriter[identityV1.IdentityProfile](
-		r.client,
-		r.entityName,
-		r.entityFields,
-		identityProfileToRecord,
 	)
 }
 
@@ -75,35 +69,6 @@ func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {
 	}
 }
 
-func identityProfileToRecord(entity *identityV1.IdentityProfile) map[string]interface{} {
-	switch entity.GetProvider() {
-	case identityV1.IdentityProvider_GITHUB:
-		profile, err := json.Marshal(entity.GetGithub())
-		if err != nil {
-			return nil
-		}
-		return map[string]interface{}{
-			"id":         entity.Id,
-			"profile_id": entity.ProfileId,
-			"provider":   entity.Provider.String(),
-			"profile":    profile,
-		}
-	case identityV1.IdentityProvider_GOOGLE:
-		profile, err := json.Marshal(entity.GetGoogle())
-		if err != nil {
-			return nil
-		}
-		return map[string]interface{}{
-			"id":         entity.Id,
-			"profile_id": entity.ProfileId,
-			"provider":   entity.Provider.String(),
-			"profile":    profile,
-		}
-	default:
-		return nil
-	}
-}
-
 func stringToIdentityProvider(value string) identityV1.IdentityProvider {
 	switch strings.ToLower(value) {
 	case "google":
@@ -131,4 +96,33 @@ func stringToGoogleProfile(value string) (*identityV1.GoogleProfile, error) {
 		return nil, err
 	}
 	return &profile, nil
+}
+
+// --- WRITER ---
+func (r *Neo4jIdentityProfileEntity) Writer() libData.EntityWriter[identityV1.IdentityProfile] {
+	return libData.NewEntityNeo4jWriter[identityV1.IdentityProfile](
+		r.client,
+		r.entityName,
+		r.entityFields,
+		identityProfileNodeMapper,
+	)
+}
+
+func identityProfileNodeMapper(entity *identityV1.IdentityProfile) libData.EntityNode {
+	var profile []byte
+	switch entity.GetProvider() {
+	case identityV1.IdentityProvider_GITHUB:
+		profile, _ = json.Marshal(entity.GetGithub())
+	case identityV1.IdentityProvider_GOOGLE:
+		profile, _ = json.Marshal(entity.GetGoogle())
+	}
+	return libData.NewEntityNode(neo4jclient.Node{
+		Id:     uuid.FromStringOrNil(entity.Id),
+		Labels: []string{"IdentityProfile", entity.GetProvider().String()},
+		Props: map[string]interface{}{
+			"profile_id": entity.ProfileId,
+			"provider":   entity.Provider.String(),
+			"profile":    profile,
+		},
+	}, nil)
 }

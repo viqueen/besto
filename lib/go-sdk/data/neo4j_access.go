@@ -94,17 +94,16 @@ func (r *EntityNeo4jReader[ENTITY]) ReadMany(params map[string]interface{}, page
 	return entities, nil
 }
 
-type EntityRelationMapper struct {
-	entityParams     map[string]interface{}
-	relation         string
-	relationParams   map[string]interface{}
-	relationTarget   string
-	relationTargetId uuid.UUID
-}
-
 type EntityNode struct {
 	node         neo4jclient.Node
 	relationship *neo4jclient.Relationship
+}
+
+func NewEntityNode(node neo4jclient.Node, relationship *neo4jclient.Relationship) EntityNode {
+	return EntityNode{
+		node:         node,
+		relationship: relationship,
+	}
 }
 
 // EntityNeo4jWriter is a concrete implementation of the EntityWriter interface for Neo4j.
