@@ -13,7 +13,7 @@ RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Install connect-es
-RUN npm install -g @bufbuild/protoc-gen-es @connectrpc/protoc-gen-connect-es
+RUN npm install -g @bufbuild/protoc-gen-es @connectrpc/protoc-gen-connect-es protoc-gen-ts
 
 ENV GO111MODULE=on
 

@@ -2,3 +2,5 @@
 dist/
 node_modules/
 tmp/
+_api/node-sdk
+_api/web-sdk/
