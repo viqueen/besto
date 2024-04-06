@@ -6,6 +6,11 @@ import (
 	"log"
 )
 
+type Pagination struct {
+	Offset int32
+	Limit  int32
+}
+
 type Node struct {
 	Id     uuid.UUID
 	Labels []string
@@ -56,7 +61,7 @@ func NewLocalNeo4jClient() (*Neo4jClient, error) {
 }
 
 // ExecuteReadQuery executes a read query against Neo4j.
-func (n *Neo4jClient) ExecuteReadQuery(query string, params map[string]interface{}) (neo4j.Result, error) {
+func (n *Neo4jClient) ExecuteReadQuery(query Query) (neo4j.Result, error) {
 	session, _ := n.driver.NewSession(neo4j.SessionConfig{
 		AccessMode:   neo4j.AccessModeRead,
 		DatabaseName: "",
@@ -64,7 +69,7 @@ func (n *Neo4jClient) ExecuteReadQuery(query string, params map[string]interface
 	defer session.Close()
 
 	result, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		return transaction.Run(query, params)
+		return transaction.Run(query.Statement, query.Params)
 	})
 
 	if err != nil {

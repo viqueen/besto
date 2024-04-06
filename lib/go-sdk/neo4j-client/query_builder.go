@@ -12,6 +12,7 @@ type QueryBuilder interface {
 	CreateNode(target string, node Node) QueryBuilder
 	CreateRelationship(relationship Relationship) QueryBuilder
 	Return(targets ...string) QueryBuilder
+	WithPagination(pagination Pagination) QueryBuilder
 	BuildQuery() Query
 }
 
@@ -61,6 +62,22 @@ func (q queryBuilder) CreateRelationship(relationship Relationship) QueryBuilder
 
 func (q queryBuilder) Return(targets ...string) QueryBuilder {
 	q.statement += fmt.Sprintf("RETURN %s\n", strings.Join(targets, ", "))
+	return q
+}
+
+func (q queryBuilder) WithPagination(pagination Pagination) QueryBuilder {
+	if pagination.Offset == 0 && pagination.Limit == 0 {
+		return q
+	}
+	if pagination.Offset == 0 {
+		q.statement += fmt.Sprintf("LIMIT %d\n", pagination.Limit)
+		return q
+	}
+	if pagination.Limit == 0 {
+		q.statement += fmt.Sprintf("SKIP %d\n", pagination.Offset)
+		return q
+	}
+	q.statement += fmt.Sprintf("SKIP %d LIMIT %d\n", pagination.Offset, pagination.Limit)
 	return q
 }
 
