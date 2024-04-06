@@ -6,5 +6,7 @@ use (
 	./apps/_harness
 	./apps/platform
 	./lib/go-sdk/arch-unit
+	./lib/go-sdk/data
+	./lib/go-sdk/neo4j-client
 	./lib/go-sdk/slices
 )
