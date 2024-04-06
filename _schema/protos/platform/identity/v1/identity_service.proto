@@ -19,7 +19,7 @@ message SignUpResponse {
 }
 
 message SignInRequest {
-  IdentityProvider provider = 1;
+  IdentityProfile profile = 1;
 }
 
 message SignInResponse {

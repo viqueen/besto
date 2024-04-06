@@ -25,9 +25,28 @@ func NewIdentityService(config IdentityServiceConfig) *IdentityService {
 	}
 }
 
-func (i IdentityService) SignIn(ctx context.Context, request *identityV1.SignInRequest) (*identityV1.SignInResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (i IdentityService) SignIn(_ context.Context, request *identityV1.SignInRequest) (*identityV1.SignInResponse, error) {
+	profile := request.GetProfile()
+	entities, err := i.access.IdentityProfile.Reader.ReadMany(map[string]interface{}{
+		"profile_id": profile.GetProfileId(),
+		"provider":   profile.GetProvider().String(),
+	}, libData.PageInfo{PageSize: 1})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to read identity profile: %v", err)
+	}
+	if len(entities) == 0 {
+		return nil, status.Errorf(codes.PermissionDenied, "identity profile not permitted")
+	}
+
+	// TODO: we need to look up identity by profile
+	identity, err := i.access.Identity.Reader.ReadOne(uuid.Must(uuid.NewV4()))
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to read identity: %v", err)
+	}
+
+	return &identityV1.SignInResponse{
+		Identity: identity,
+	}, nil
 }
 
 func (i IdentityService) SignUp(_ context.Context, request *identityV1.SignUpRequest) (*identityV1.SignUpResponse, error) {

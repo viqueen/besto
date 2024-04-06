@@ -9,18 +9,6 @@ type EntityWriteCtx struct {
 	RelateMatchedToCreated *neo4jclient.Relationship
 }
 
-type EntityNode struct {
-	node         neo4jclient.Node
-	relationship *neo4jclient.Relationship
-}
-
-func NewEntityNode(node neo4jclient.Node, relationship *neo4jclient.Relationship) EntityNode {
-	return EntityNode{
-		node:         node,
-		relationship: relationship,
-	}
-}
-
 // EntityNeo4jWriter is a concrete implementation of the EntityWriter interface for Neo4j.
 type EntityNeo4jWriter[ENTITY interface{}] struct {
 	EntityWriter[ENTITY]
