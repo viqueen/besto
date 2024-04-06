@@ -64,7 +64,7 @@ func (x *SignUpRequest) GetProvider() IdentityProvider {
 	if x != nil {
 		return x.Provider
 	}
-	return IdentityProvider_GOOGLE
+	return IdentityProvider_UNSPECIFIED
 }
 
 type SignUpResponse struct {
@@ -158,7 +158,7 @@ func (x *SignInRequest) GetProvider() IdentityProvider {
 	if x != nil {
 		return x.Provider
 	}
-	return IdentityProvider_GOOGLE
+	return IdentityProvider_UNSPECIFIED
 }
 
 type SignInResponse struct {

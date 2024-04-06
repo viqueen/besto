@@ -11,19 +11,25 @@ import { Message, proto3 } from "@bufbuild/protobuf";
  */
 export enum IdentityProvider {
   /**
-   * @generated from enum value: GOOGLE = 0;
+   * @generated from enum value: UNSPECIFIED = 0;
    */
-  GOOGLE = 0,
+  UNSPECIFIED = 0,
 
   /**
-   * @generated from enum value: GITHUB = 1;
+   * @generated from enum value: GOOGLE = 1;
    */
-  GITHUB = 1,
+  GOOGLE = 1,
+
+  /**
+   * @generated from enum value: GITHUB = 2;
+   */
+  GITHUB = 2,
 }
 // Retrieve enum metadata with: proto3.getEnumType(IdentityProvider)
 proto3.util.setEnumType(IdentityProvider, "IdentityProvider", [
-  { no: 0, name: "GOOGLE" },
-  { no: 1, name: "GITHUB" },
+  { no: 0, name: "UNSPECIFIED" },
+  { no: 1, name: "GOOGLE" },
+  { no: 2, name: "GITHUB" },
 ]);
 
 /**
@@ -188,22 +194,27 @@ export class IdentityProfile extends Message<IdentityProfile> {
   id = "";
 
   /**
-   * @generated from field: IdentityProvider provider = 2;
+   * @generated from field: string profile_id = 2;
    */
-  provider = IdentityProvider.GOOGLE;
+  profileId = "";
+
+  /**
+   * @generated from field: IdentityProvider provider = 3;
+   */
+  provider = IdentityProvider.UNSPECIFIED;
 
   /**
    * @generated from oneof IdentityProfile.profile
    */
   profile: {
     /**
-     * @generated from field: GoogleProfile google = 3;
+     * @generated from field: GoogleProfile google = 4;
      */
     value: GoogleProfile;
     case: "google";
   } | {
     /**
-     * @generated from field: GithubProfile github = 4;
+     * @generated from field: GithubProfile github = 5;
      */
     value: GithubProfile;
     case: "github";
@@ -218,9 +229,10 @@ export class IdentityProfile extends Message<IdentityProfile> {
   static readonly typeName = "IdentityProfile";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "provider", kind: "enum", T: proto3.getEnumType(IdentityProvider) },
-    { no: 3, name: "google", kind: "message", T: GoogleProfile, oneof: "profile" },
-    { no: 4, name: "github", kind: "message", T: GithubProfile, oneof: "profile" },
+    { no: 2, name: "profile_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "provider", kind: "enum", T: proto3.getEnumType(IdentityProvider) },
+    { no: 4, name: "google", kind: "message", T: GoogleProfile, oneof: "profile" },
+    { no: 5, name: "github", kind: "message", T: GithubProfile, oneof: "profile" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): IdentityProfile {
@@ -241,49 +253,6 @@ export class IdentityProfile extends Message<IdentityProfile> {
 }
 
 /**
- * @generated from message IdentityEmail
- */
-export class IdentityEmail extends Message<IdentityEmail> {
-  /**
-   * @generated from field: string value = 1;
-   */
-  value = "";
-
-  /**
-   * @generated from field: bool verified = 2;
-   */
-  verified = false;
-
-  constructor(data?: PartialMessage<IdentityEmail>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "IdentityEmail";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "verified", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): IdentityEmail {
-    return new IdentityEmail().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): IdentityEmail {
-    return new IdentityEmail().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): IdentityEmail {
-    return new IdentityEmail().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: IdentityEmail | PlainMessage<IdentityEmail> | undefined, b: IdentityEmail | PlainMessage<IdentityEmail> | undefined): boolean {
-    return proto3.util.equals(IdentityEmail, a, b);
-  }
-}
-
-/**
  * @generated from message Identity
  */
 export class Identity extends Message<Identity> {
@@ -291,16 +260,6 @@ export class Identity extends Message<Identity> {
    * @generated from field: string id = 1;
    */
   id = "";
-
-  /**
-   * @generated from field: IdentityEmail primary_email = 2;
-   */
-  primaryEmail?: IdentityEmail;
-
-  /**
-   * @generated from field: repeated IdentityEmail emails = 3;
-   */
-  emails: IdentityEmail[] = [];
 
   /**
    * @generated from field: repeated IdentityProfile profiles = 4;
@@ -316,8 +275,6 @@ export class Identity extends Message<Identity> {
   static readonly typeName = "Identity";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "primary_email", kind: "message", T: IdentityEmail },
-    { no: 3, name: "emails", kind: "message", T: IdentityEmail, repeated: true },
     { no: 4, name: "profiles", kind: "message", T: IdentityProfile, repeated: true },
   ]);
 

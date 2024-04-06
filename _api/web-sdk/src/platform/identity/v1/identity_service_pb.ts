@@ -14,7 +14,7 @@ export class SignUpRequest extends Message<SignUpRequest> {
   /**
    * @generated from field: IdentityProvider provider = 1;
    */
-  provider = IdentityProvider.GOOGLE;
+  provider = IdentityProvider.UNSPECIFIED;
 
   constructor(data?: PartialMessage<SignUpRequest>) {
     super();
@@ -88,7 +88,7 @@ export class SignInRequest extends Message<SignInRequest> {
   /**
    * @generated from field: IdentityProvider provider = 1;
    */
-  provider = IdentityProvider.GOOGLE;
+  provider = IdentityProvider.UNSPECIFIED;
 
   constructor(data?: PartialMessage<SignInRequest>) {
     super();
