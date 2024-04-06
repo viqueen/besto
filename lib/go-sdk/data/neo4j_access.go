@@ -134,13 +134,13 @@ func NewEntityNeo4jWriter[ENTITY interface{}](
 // CreateOne creates a single entity in Neo4j.
 func (w *EntityNeo4jWriter[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error) {
 	mapper := w.entityNodeMapper(entity)
-	qb := neo4jclient.NewQueryBuilder()
+	qb := neo4jclient.NewWriteQueryBuilder()
 	qb = qb.CreateNode(mapper.node)
 	if mapper.relationship != nil {
 		qb = qb.WithRelationship(*mapper.relationship)
 	}
 	query := qb.BuildQuery()
-	err := w.client.ExecuteWriteQuery(query.Statement, query.Params)
+	err := w.client.ExecuteWriteQuery(query)
 
 	if err != nil {
 		return nil, err
