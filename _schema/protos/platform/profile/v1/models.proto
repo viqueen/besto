@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option go_package = "github.com/viqueen/besto/_api/go-sdk/platform/profile/v1;profileV1";
+
+import "identity/v1/models.proto";
+
+message Profile {
+  Identity identity = 1;
+}

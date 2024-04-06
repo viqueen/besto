@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "github.com/viqueen/besto/_api/go-sdk/platform/profile/v1;profileV1";
+
+import "platform/profile/v1/models.proto";
+
+service ProfileService {
+    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+}
+
+message GetProfileRequest {}
+
+message GetProfileResponse {
+  Profile profile = 1;
+}
