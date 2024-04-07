@@ -41,45 +41,56 @@ func identityProfileReadCtx(entity *identityV1.IdentityProfile) libData.EntityRe
 	if entity.GetProfileId() != "" {
 		props["profile_id"] = entity.ProfileId
 	}
+	labels := []string{"IdentityProfile"}
 	if entity.GetProvider() != identityV1.IdentityProvider_UNSPECIFIED {
 		props["provider"] = entity.Provider.String()
+		labels = append(labels, entity.Provider.String())
 	}
 	return libData.EntityReadCtx{
 		From: &neo4jclient.Node{
 			Id:     uuid.FromStringOrNil(entity.Id),
-			Labels: []string{"IdentityProfile", entity.Provider.String()},
+			Labels: labels,
 			Props:  props,
 		},
 	}
 }
 
 func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {
-	provider := stringToIdentityProvider(record.GetByIndex(2).(string))
+	node, ok := record.GetByIndex(0).(neo4j.Node)
+	if !ok {
+		return nil
+	}
+
+	props := node.Props()
+	provider := stringToIdentityProvider(props["provider"].(string))
+	id := props["id"].(string)
+	profileId := props["profile_id"].(string)
+	profile := props["profile"].([]byte)
 	switch provider {
 	case identityV1.IdentityProvider_GITHUB:
-		profile, err := stringToGithubProfile(record.GetByIndex(3).(string))
+		githubProfile, err := stringToGithubProfile(profile)
 		if err != nil {
 			return nil
 		}
 		return &identityV1.IdentityProfile{
-			Id:        record.GetByIndex(0).(string),
-			ProfileId: record.GetByIndex(1).(string),
+			Id:        id,
+			ProfileId: profileId,
 			Provider:  provider,
 			Profile: &identityV1.IdentityProfile_Github{
-				Github: profile,
+				Github: githubProfile,
 			},
 		}
 	case identityV1.IdentityProvider_GOOGLE:
-		profile, err := stringToGoogleProfile(record.GetByIndex(3).(string))
+		googleProfile, err := stringToGoogleProfile(profile)
 		if err != nil {
 			return nil
 		}
 		return &identityV1.IdentityProfile{
-			Id:        record.GetByIndex(0).(string),
-			ProfileId: record.GetByIndex(1).(string),
+			Id:        id,
+			ProfileId: profileId,
 			Provider:  provider,
 			Profile: &identityV1.IdentityProfile_Google{
-				Google: profile,
+				Google: googleProfile,
 			},
 		}
 	default:
@@ -98,18 +109,18 @@ func stringToIdentityProvider(value string) identityV1.IdentityProvider {
 	}
 }
 
-func stringToGithubProfile(value string) (*identityV1.GithubProfile, error) {
+func stringToGithubProfile(value []byte) (*identityV1.GithubProfile, error) {
 	var profile identityV1.GithubProfile
-	err := json.Unmarshal([]byte(value), &profile)
+	err := json.Unmarshal(value, &profile)
 	if err != nil {
 		return nil, err
 	}
 	return &profile, nil
 }
 
-func stringToGoogleProfile(value string) (*identityV1.GoogleProfile, error) {
+func stringToGoogleProfile(value []byte) (*identityV1.GoogleProfile, error) {
 	var profile identityV1.GoogleProfile
-	err := json.Unmarshal([]byte(value), &profile)
+	err := json.Unmarshal(value, &profile)
 	if err != nil {
 		return nil, err
 	}

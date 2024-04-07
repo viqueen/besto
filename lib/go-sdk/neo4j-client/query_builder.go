@@ -30,21 +30,12 @@ func NewQueryBuilder() QueryBuilder {
 }
 
 func (q queryBuilder) MatchNode(target string, node Node) QueryBuilder {
-	labels := strings.Join(node.Labels, ":")
-	var fieldNames []string
-
-	if !node.Id.IsNil() {
-		fieldNames = append(fieldNames, fmt.Sprintf("id: $%s_id", target))
-		q.params[fmt.Sprintf("%s_id")] = node.Id.String()
+	// MATCH (c:IdentityProfile:GITHUB { id: $c_id, provider: $c_provider, profile: $c_profile })
+	statement, params := nodeQuery(target, node)
+	q.statement += fmt.Sprintf("MATCH %s\n", statement)
+	for key, value := range params {
+		q.params[key] = value
 	}
-
-	for key, value := range node.Props {
-		fieldNames = append(fieldNames, fmt.Sprintf("%s: $%s_%s", key, target, key))
-		q.params[fmt.Sprintf("%s_%s", target, key)] = value
-	}
-
-	filter := strings.Join(fieldNames, ", ")
-	q.statement += fmt.Sprintf("MATCH (%s:%s {%s})\n", target, labels, filter)
 	return q
 }
 
@@ -59,18 +50,32 @@ func (q queryBuilder) MatchRelationship(fromTarget string, relation Relationship
 }
 
 func (q queryBuilder) CreateNode(target string, node Node) QueryBuilder {
-	labels := strings.Join(node.Labels, ":")
-	fieldNames := maps.Keys(node.Props)
-	fields := slices.Map(fieldNames, func(field string) string {
-		return fmt.Sprintf("%s.%s", target, field)
-	})
-	joinedFields := strings.Join(fields, ", ")
-	if joinedFields != "" {
-		joinedFields = fmt.Sprintf(", %s", joinedFields)
+	// CREATE (c:IdentityProfile:GITHUB { id: $c_id, provider: $c_provider, profile: $c_profile })
+	statement, params := nodeQuery(target, node)
+	q.statement += fmt.Sprintf("CREATE %s\n", statement)
+	for key, value := range params {
+		q.params[key] = value
 	}
-	q.statement += fmt.Sprintf("CREATE (%s:%s { id: $%s_id %s})\n", target, labels, target, joinedFields)
-	q.params[fmt.Sprintf("%s_id", target)] = node.Id.String()
 	return q
+}
+
+func nodeQuery(target string, node Node) (string, map[string]interface{}) {
+	var params = make(map[string]interface{})
+	var fieldNames []string
+
+	if !node.Id.IsNil() {
+		fieldNames = append(fieldNames, fmt.Sprintf("id: $%s_id", target))
+		params[fmt.Sprintf("%s_id", target)] = node.Id.String()
+	}
+
+	for key, value := range node.Props {
+		fieldNames = append(fieldNames, fmt.Sprintf("%s: $%s_%s", key, target, key))
+		params[fmt.Sprintf("%s_%s", target, key)] = value
+	}
+
+	labels := strings.Join(node.Labels, ":")
+	filter := strings.Join(fieldNames, ", ")
+	return fmt.Sprintf("(%s:%s {%s})", target, labels, filter), params
 }
 
 func (q queryBuilder) CreateRelationship(from string, relationship Relationship, to string) QueryBuilder {
