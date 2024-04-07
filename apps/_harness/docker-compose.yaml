@@ -52,6 +52,21 @@ services:
     networks:
       - "local"
 
+  authz-server:
+    image: "node:20.12.1-alpine3.19"
+    working_dir: "/besto/apps/authz"
+    command: "npm run server:dev"
+    ports:
+      - "4000:4000"
+    volumes:
+      - "../../apps/authz:/besto/apps/authz"
+      - "../../node_modules:/besto/node_modules"
+      - "../../tsconfig.json:/besto/tsconfig.json"
+      - "../../lib/node-sdk:/besto/lib/node-sdk"
+      - "../../_api/node-sdk:/besto/_api/node-sdk"
+    networks:
+      - "local"
+
 networks:
   local:
     driver: "bridge"

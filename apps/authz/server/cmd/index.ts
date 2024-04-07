@@ -1,6 +1,5 @@
 import path from "path";
 
-import { localstackDynamoDbClientConfig } from "@besto/lib-node-sdk";
 import dotenv from "dotenv";
 import express, { Express } from "express";
 import morgan from "morgan";
@@ -26,7 +25,7 @@ const configureAuthz = async ({
   app,
 }: WithExpressApp): Promise<WithExpressApp> => {
   const { services, product } = await bootstrapAuth(
-    localstackDynamoDbClientConfig,
+    { region: "us-east-1", endpoint: "http://aws-localstack:4566" },
     true,
   );
   await signUpEndpoint({ app, services, product });
