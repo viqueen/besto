@@ -16,7 +16,10 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "schema": "./_cli/build.sh schema"
+    "tools": "./_cli/build.sh tools",
+    "codegen": "./_cli/build.sh codegen",
+    "sdks": "./_cli/build.sh sdks",
+    "start": "./_cli/start.sh"
   },
   "devDependencies": {
     "@labset-eslint/eslint-plugin": "^1.3.0",
