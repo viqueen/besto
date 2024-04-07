@@ -28,8 +28,8 @@ const githubAuthStrategy = async ({
       callbackURL: `${product.gatewayUrl}/authz/sign-up/_github/callback`,
     },
     (
-      token: string,
-      refresh: string,
+      _token: string,
+      _refresh: string,
       profile: Profile,
       done: VerifyCallback,
     ) => {

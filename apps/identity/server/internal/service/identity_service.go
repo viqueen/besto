@@ -5,7 +5,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/viqueen/besto/_api/go-sdk/identity/v1"
 	"github.com/viqueen/besto/apps/identity/server/internal/data"
-	libData "github.com/viqueen/besto/lib/go-sdk/data"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -27,23 +26,19 @@ func NewIdentityService(config IdentityServiceConfig) *IdentityService {
 
 func (i IdentityService) SignIn(_ context.Context, request *identityV1.SignInRequest) (*identityV1.SignInResponse, error) {
 	profile := request.GetProfile()
-	entities, err := i.access.IdentityProfile.Reader.ReadMany(map[string]interface{}{
-		"profile_id": profile.GetProfileId(),
-		"provider":   profile.GetProvider().String(),
-	}, libData.PageInfo{PageSize: 1})
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to read identity profile: %v", err)
-	}
-	if len(entities) == 0 {
-		return nil, status.Errorf(codes.PermissionDenied, "identity profile not permitted")
-	}
-
 	identities, err := i.access.Identity.Reader.Filter(&identityV1.Identity{
-		Profile: entities[0],
+		Profile: &identityV1.IdentityProfile{
+			ProfileId: profile.GetProfileId(),
+			Provider:  profile.GetProvider(),
+		},
 	})
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to filter identity: %v", err)
+	}
+
+	if len(identities) > 1 {
+		return nil, status.Errorf(codes.Internal, "multiple identities found")
 	}
 
 	if len(identities) == 0 {
@@ -57,15 +52,25 @@ func (i IdentityService) SignIn(_ context.Context, request *identityV1.SignInReq
 
 func (i IdentityService) SignUp(_ context.Context, request *identityV1.SignUpRequest) (*identityV1.SignUpResponse, error) {
 	profile := request.GetProfile()
-	entities, err := i.access.IdentityProfile.Reader.ReadMany(map[string]interface{}{
-		"profile_id": profile.GetProfileId(),
-		"provider":   profile.GetProvider().String(),
-	}, libData.PageInfo{PageSize: 1})
+	identities, err := i.access.Identity.Reader.Filter(&identityV1.Identity{
+		Profile: &identityV1.IdentityProfile{
+			ProfileId: profile.GetProfileId(),
+			Provider:  profile.GetProvider(),
+		},
+	})
+
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to read identity profile: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to filter identity: %v", err)
 	}
-	if len(entities) > 0 {
-		return nil, status.Errorf(codes.AlreadyExists, "identity profile already exists")
+
+	if len(identities) > 1 {
+		return nil, status.Errorf(codes.Internal, "multiple identities found")
+	}
+
+	if len(identities) == 1 {
+		return &identityV1.SignUpResponse{
+			Identity: identities[0],
+		}, nil
 	}
 
 	createdProfile, err := i.access.IdentityProfile.Writer.CreateOne(&identityV1.IdentityProfile{
