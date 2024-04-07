@@ -85,7 +85,7 @@ func identityWriteCtx(identity *identityV1.Identity) libData.EntityWriteCtx {
 			Labels: []string{"IdentityProfile"},
 			Props: map[string]interface{}{
 				"profile_id": profile.GetProfileId(),
-				"provider":   profile.GetProvider(),
+				"provider":   profile.GetProvider().String(),
 			},
 		},
 		Creates: &neo4jclient.Node{

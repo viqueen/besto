@@ -45,3 +45,37 @@ func TestIdentityProfileEntity(t *testing.T) {
 	require.Len(t, foundByProfileId, 1)
 	require.Equal(t, created, foundByProfileId[0])
 }
+
+func TestIdentityEntity(t *testing.T) {
+	client, err := neo4jclient.NewTestNeo4jClient()
+	require.NoError(t, err)
+
+	identityProfile := data.NewNeo4jIdentityProfileEntity(client)
+	identity := data.NewNeo4jIdentityEntity(client)
+
+	newProfile := &identityV1.IdentityProfile{
+		Id:        uuid.Must(uuid.NewV4()).String(),
+		ProfileId: uuid.Must(uuid.NewV4()).String(),
+		Provider:  identityV1.IdentityProvider_GITHUB,
+		Profile: &identityV1.IdentityProfile_Github{
+			Github: &identityV1.GithubProfile{
+				Login: "viqueen",
+			},
+		},
+	}
+
+	createdProfile, err := identityProfile.Writer().CreateOne(newProfile)
+	require.NoError(t, err)
+	require.NotNil(t, createdProfile)
+	require.Equal(t, newProfile, createdProfile)
+
+	newIdentity := &identityV1.Identity{
+		Id:      uuid.Must(uuid.NewV4()).String(),
+		Profile: createdProfile,
+	}
+
+	createdIdentity, err := identity.Writer().CreateOne(newIdentity)
+	require.NoError(t, err)
+	require.NotNil(t, createdIdentity)
+	require.Equal(t, newIdentity, createdIdentity)
+}

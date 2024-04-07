@@ -3,7 +3,6 @@ package neo4j_client
 import (
 	"github.com/gofrs/uuid"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
-	"log"
 )
 
 type Pagination struct {
@@ -80,25 +79,20 @@ func (n *Neo4jClient) ExecuteReadQuery(query Query) (neo4j.Result, error) {
 }
 
 // ExecuteWriteQuery executes a write query against Neo4j.
-func (n *Neo4jClient) ExecuteWriteQuery(query Query) error {
+func (n *Neo4jClient) ExecuteWriteQuery(query Query) (neo4j.Result, error) {
 	session, _ := n.driver.NewSession(neo4j.SessionConfig{
 		AccessMode:   neo4j.AccessModeWrite,
 		DatabaseName: "",
 	})
-	defer func(session neo4j.Session) {
-		err := session.Close()
-		if err != nil {
-			log.Panicf("neo4j: failed session close - %v", err)
-		}
-	}(session)
+	defer session.Close()
 
-	_, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		return transaction.Run(query.Statement, query.Params)
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return result.(neo4j.Result), nil
 }

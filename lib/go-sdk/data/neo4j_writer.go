@@ -39,12 +39,14 @@ func (w *EntityNeo4jWriter[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error) {
 	writeCtx := w.entityWriteCtx(entity)
 	qb := neo4jclient.NewQueryBuilder()
 
-	if writeCtx.Matches != nil {
-		qb = qb.MatchNode("m", *writeCtx.Matches)
-	}
-
 	if writeCtx.Creates != nil {
 		qb = qb.CreateNode("c", *writeCtx.Creates)
+		qb = qb.WithTargets("c")
+	}
+
+	if writeCtx.Matches != nil {
+		qb = qb.MatchNode("m", *writeCtx.Matches)
+		qb = qb.WithTargets("m")
 	}
 
 	if writeCtx.Matches != nil && writeCtx.RelateCreatedToMatched != nil {
@@ -60,7 +62,7 @@ func (w *EntityNeo4jWriter[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error) {
 
 	qb = qb.Return(targets...)
 
-	err := w.client.ExecuteWriteQuery(qb.BuildQuery())
+	_, err := w.client.ExecuteWriteQuery(qb.BuildQuery())
 
 	if err != nil {
 		return nil, err

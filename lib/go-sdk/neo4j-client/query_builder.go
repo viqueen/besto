@@ -13,6 +13,7 @@ type QueryBuilder interface {
 	CreateNode(target string, node Node) QueryBuilder
 	CreateRelationship(fromTarget string, relationship Relationship, toTarget string) QueryBuilder
 	Return(targets ...string) QueryBuilder
+	WithTargets(target ...string) QueryBuilder
 	WithPagination(pagination Pagination) QueryBuilder
 	BuildQuery() Query
 }
@@ -79,12 +80,13 @@ func nodeQuery(target string, node Node) (string, map[string]interface{}) {
 }
 
 func (q queryBuilder) CreateRelationship(from string, relationship Relationship, to string) QueryBuilder {
-	fieldNames := maps.Keys(relationship.Props)
-	fields := slices.Map(fieldNames, func(field string) string {
-		return fmt.Sprintf("r.%s", field)
-	})
-	joinedFields := strings.Join(fields, ", ")
-	q.statement += fmt.Sprintf("(%s)-[r:%s {%s}]->(%s)\n", from, relationship.Name, joinedFields, to)
+	var fieldNames []string
+	for key, value := range relationship.Props {
+		fieldNames = append(fieldNames, fmt.Sprintf("%s: $r_%s", key, key))
+		q.params[fmt.Sprintf("r_%s", key)] = value
+	}
+	joinedFields := strings.Join(fieldNames, ", ")
+	q.statement += fmt.Sprintf("CREATE (%s)-[r:%s {%s}]->(%s)\n", from, relationship.Name, joinedFields, to)
 	return q
 }
 
@@ -106,6 +108,11 @@ func (q queryBuilder) WithPagination(pagination Pagination) QueryBuilder {
 		return q
 	}
 	q.statement += fmt.Sprintf("SKIP %d LIMIT %d\n", pagination.Offset, pagination.Limit)
+	return q
+}
+
+func (q queryBuilder) WithTargets(targets ...string) QueryBuilder {
+	q.statement += fmt.Sprintf("WITH %s\n", strings.Join(targets, ", "))
 	return q
 }
 
