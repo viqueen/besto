@@ -22,6 +22,8 @@ services:
       - NEO4J_AUTH=neo4j/password
     volumes:
       - "../../tmp/neo4j:/neo4j"
+    networks:
+      - "local"
 
   grafana-loki:
     image: grafana/loki:main-3941767
@@ -64,6 +66,23 @@ services:
       - "../../tsconfig.json:/besto/tsconfig.json"
       - "../../lib/node-sdk:/besto/lib/node-sdk"
       - "../../_api/node-sdk:/besto/_api/node-sdk"
+    networks:
+      - "local"
+
+  identity-server:
+    image: "golang:1.22"
+    working_dir: "/besto/apps/identity"
+    command: "go run server/cmd/main.go"
+    ports:
+      - "40041:40041"
+    volumes:
+      - "../../apps/identity:/besto/apps/identity"
+      - "../../lib/go-sdk:/besto/lib/go-sdk"
+      - "../../_api/go-sdk:/besto/_api/go-sdk"
+      - "../../go.work:/besto/go.work"
+      - "../../_schema/go.mod:/besto/_schema/go.mod"
+      - "../../apps/_harness/go.mod:/besto/apps/_harness/go.mod"
+      - "../../apps/platform/go.mod:/besto/apps/platform/go.mod"
     networks:
       - "local"
 

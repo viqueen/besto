@@ -42,17 +42,13 @@ type Neo4jClient struct {
 	driver neo4j.Driver
 }
 
-// NewLocalNeo4jClient creates a new instance of Neo4jClient for a local Neo4j instance.
-func NewLocalNeo4jClient() (*Neo4jClient, error) {
-	return newNeo4jClient("bolt://localhost:7687", "neo4j", "password")
-}
-
 // NewTestNeo4jClient creates a new instance of Neo4jClient for a test Neo4j instance.
 func NewTestNeo4jClient() (*Neo4jClient, error) {
-	return newNeo4jClient("bolt://localhost:8687", "neo4j", "test-password")
+	return NewNeo4jClient("bolt://localhost:8687", "neo4j", "test-password")
 }
 
-func newNeo4jClient(uri, username, password string) (*Neo4jClient, error) {
+// NewNeo4jClient creates a new instance of Neo4jClient.
+func NewNeo4jClient(uri, username, password string) (*Neo4jClient, error) {
 	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""), func(c *neo4j.Config) {
 		c.Encrypted = false
 	})

@@ -22,7 +22,7 @@ func main() {
 	defer zapLogger.Sync()
 
 	// Create a new instance of a Neo4j client
-	neo4jClient, err := neo4jclient.NewLocalNeo4jClient()
+	neo4jClient, err := neo4jclient.NewNeo4jClient("bolt://neo4j-graph:7687", "neo4j", "password")
 	if err != nil {
 		log.Fatalf("failed to create neo4j client : %v", err)
 	}

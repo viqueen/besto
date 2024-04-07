@@ -42,3 +42,13 @@ yarn sdks
 ```bash
 yarn harness
 ```
+
+- start the platform server
+```bash
+yarn workspace @besto/platform server:dev
+```
+
+- start the platform web
+```bash
+yarn workspace @besto/platform web:dev
+```

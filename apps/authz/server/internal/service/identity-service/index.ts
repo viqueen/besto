@@ -15,7 +15,7 @@ class IdentityService implements IIdentityService {
 
   constructor() {
     this.client = new IdentityServiceClient(
-      "localhost:40041",
+      "identity-server:40041",
       grpc.credentials.createInsecure(),
     );
   }
