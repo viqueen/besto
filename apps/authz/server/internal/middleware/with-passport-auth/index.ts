@@ -27,7 +27,6 @@ passport.deserializeUser<Express.User>((user, done) => {
 });
 
 interface WithPassportAuth {
-  target: string;
   app: Express;
   services: {
     authSession: IAuthSessionService<SessionData>;
@@ -37,7 +36,6 @@ interface WithPassportAuth {
 }
 
 const withPassportAuth = async ({
-  target,
   app,
   services,
   middlewares,
@@ -45,7 +43,6 @@ const withPassportAuth = async ({
   const store = new AuthSessionStore(services.authSession);
   const cookieSecret = await services.secret.cookie();
   app.use(
-    target,
     json(),
     urlencoded({ extended: true }),
     session({

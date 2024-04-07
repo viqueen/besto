@@ -10,6 +10,7 @@ import {
   signInEndpoint,
   signUpEndpoint,
 } from "../internal/endpoint";
+import { withPassportAuth } from "../internal/middleware";
 
 interface WithExpressApp {
   app: Express;
@@ -28,6 +29,11 @@ const configureAuthz = async ({
     { region: "us-east-1", endpoint: "http://aws-localstack:4566" },
     true,
   );
+  await withPassportAuth({
+    app,
+    services,
+    middlewares: [],
+  });
   await signUpEndpoint({ app, services, product });
   await signInEndpoint({
     app,

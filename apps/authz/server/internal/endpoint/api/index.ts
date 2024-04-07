@@ -17,18 +17,14 @@ interface ApiEndpointProps {
 }
 
 const apiEndpoint = async ({ app, services }: ApiEndpointProps) => {
-  await withPassportAuth({
-    target: "/api/*",
-    app,
-    services,
-    middlewares: [
-      userRequiredMiddleware,
-      tokenRequiredMiddleware,
-      (_request, response, _next) => {
-        response.sendStatus(200);
-      },
-    ],
-  });
+  app.post(
+    "/api/*",
+    userRequiredMiddleware,
+    tokenRequiredMiddleware,
+    (_request, response) => {
+      response.sendStatus(200);
+    },
+  );
 };
 
 export { apiEndpoint };

@@ -17,7 +17,6 @@ git clone git@github.com:viqueen/besto.git
 
 - install dependencies
 ```bash
-cd besto
 yarn
 ```
 
@@ -28,7 +27,7 @@ yarn tools
 
 - codegen
 ```bash
-yarn schema
+yarn codegen
 ```
 
 - build sdks
@@ -40,7 +39,7 @@ yarn sdks
 
 - start the harness server
 ```bash
-yarn harness
+yarn start harness
 ```
 
 - start the platform server
