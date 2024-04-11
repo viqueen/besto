@@ -16,9 +16,9 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "tools": "./_cli/build.sh tools",
-    "codegen": "./_cli/build.sh codegen",
-    "sdks": "./_cli/build.sh sdks",
+    "schema:tools": "./_cli/schema.sh tools",
+    "schema:codegen": "./_cli/schema.sh codegen",
+    "build:sdks": "./_cli/build.sh sdks",
     "start": "./_cli/start.sh"
   },
   "devDependencies": {

@@ -20,19 +20,19 @@ git clone git@github.com:viqueen/besto.git
 yarn
 ```
 
-- build required tools
+- schema: build required tools
 ```bash
-yarn tools
+yarn schema:tools
 ```
 
-- codegen
+- schema: codegen
 ```bash
-yarn codegen
+yarn schema:codegen
 ```
 
 - build sdks
 ```bash
-yarn sdks
+yarn build:sdks
 ```
 
 ### dev run
