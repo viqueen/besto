@@ -11,20 +11,20 @@ interface ISecretService {
 
 class DotEnvSecretService implements ISecretService {
   async cookie(): Promise<string> {
-    return process.env.COOKIE_SECRET || "";
+    return process.env.COOKIE_SECRET ?? "";
   }
 
   async google(): Promise<OAuth2Config> {
     return {
-      clientID: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientID: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     };
   }
 
   async github(): Promise<OAuth2Config> {
     return {
-      clientID: process.env.GITHUB_CLIENT_ID || "",
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
+      clientID: process.env.GITHUB_CLIENT_ID ?? "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET ?? "",
     };
   }
 }
