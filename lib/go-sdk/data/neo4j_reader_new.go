@@ -67,7 +67,8 @@ func (e EntityNeo4jReaderNew[ENTITY]) ReadMany(params map[string]interface{}, pa
 	fields := slices.Map(maps.Keys(params), func(key string) string {
 		return fmt.Sprintf("%s : $%s", key, key)
 	})
-	matchStatement := fmt.Sprintf(`MATCH (t:%s {%s}) RETURN t SKIP %d LIMIT %d`, labels, strings.Join(fields, ","), offset, limit)
+	joinedFields := strings.Join(fields, ", ")
+	matchStatement := fmt.Sprintf(`MATCH (t:%s {%s}) RETURN t SKIP %d LIMIT %d`, labels, joinedFields, offset, limit)
 	result, err := e.client.ExecuteReadQuery(neo4jclient.Query{Statement: matchStatement, Params: params})
 	if err != nil {
 		return nil, err

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	neo4j_client "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
+	"github.com/viqueen/besto/lib/go-sdk/slices"
+	"golang.org/x/exp/maps"
 	"strings"
 )
 
@@ -34,13 +36,15 @@ func (e EntityNeo4jWriterNew[ENTITY]) CreateOne(entity *ENTITY) (*ENTITY, error)
 	if err != nil {
 		return nil, err
 	}
-
 	labels := strings.Join(e.labels, ":")
-	createStatement := fmt.Sprintf(`CREATE (t:%s $props) RETURN t`, labels)
-	createParams := map[string]interface{}{"props": entityMap}
+	fields := slices.Map(maps.Keys(entityMap), func(key string) string {
+		return fmt.Sprintf("%s: $%s", key, key)
+	})
+	joinedFields := strings.Join(fields, ", ")
+	createStatement := fmt.Sprintf(`CREATE (t:%s {%s}) RETURN t`, labels, joinedFields)
 	result, err := e.client.ExecuteWriteQuery(neo4j_client.Query{
 		Statement: createStatement,
-		Params:    createParams,
+		Params:    entityMap,
 	})
 	if err != nil {
 		return nil, err

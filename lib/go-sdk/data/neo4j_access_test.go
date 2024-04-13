@@ -35,7 +35,7 @@ func TestEntityNeo4jAccess(t *testing.T) {
 	client, err := neo4jclient.NewTestNeo4jClient()
 	require.NoError(t, err)
 
-	entityName := strings.ReplaceAll(uuid.Must(uuid.NewV4()).String(), "-", "")
+	entityName := "e" + strings.ReplaceAll(uuid.Must(uuid.NewV4()).String(), "-", "")
 	reader := data.NewEntityNeo4jReaderNew[TestEntity](client, []string{entityName}, testRecordMapper)
 	writer := data.NewEntityNeo4jWriterNew[TestEntity](client, []string{entityName}, testEntityMapper, testRecordMapper)
 
