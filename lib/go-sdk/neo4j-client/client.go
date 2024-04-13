@@ -38,16 +38,17 @@ type Neo4jWriter interface {
 
 // Neo4jClient is a client for interacting with Neo4j.
 type Neo4jClient struct {
+	dbName string
 	driver neo4j.Driver
 }
 
 // NewTestNeo4jClient creates a new instance of Neo4jClient for a test Neo4j instance.
 func NewTestNeo4jClient() (*Neo4jClient, error) {
-	return NewNeo4jClient("bolt://localhost:8687", "neo4j", "test-password")
+	return NewNeo4jClient("bolt://localhost:8687", "neo4j", "test-password", "")
 }
 
 // NewNeo4jClient creates a new instance of Neo4jClient.
-func NewNeo4jClient(uri, username, password string) (*Neo4jClient, error) {
+func NewNeo4jClient(uri, username, password, dbName string) (*Neo4jClient, error) {
 	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""), func(c *neo4j.Config) {
 		c.Encrypted = false
 	})
@@ -55,6 +56,7 @@ func NewNeo4jClient(uri, username, password string) (*Neo4jClient, error) {
 		return nil, err
 	}
 	return &Neo4jClient{
+		dbName: dbName,
 		driver: driver,
 	}, nil
 }
@@ -63,7 +65,7 @@ func NewNeo4jClient(uri, username, password string) (*Neo4jClient, error) {
 func (n *Neo4jClient) ExecuteReadQuery(query Query) (neo4j.Result, error) {
 	session, _ := n.driver.NewSession(neo4j.SessionConfig{
 		AccessMode:   neo4j.AccessModeRead,
-		DatabaseName: "",
+		DatabaseName: n.dbName,
 	})
 	defer session.Close()
 
@@ -82,7 +84,7 @@ func (n *Neo4jClient) ExecuteReadQuery(query Query) (neo4j.Result, error) {
 func (n *Neo4jClient) ExecuteWriteQuery(query Query) (neo4j.Result, error) {
 	session, _ := n.driver.NewSession(neo4j.SessionConfig{
 		AccessMode:   neo4j.AccessModeWrite,
-		DatabaseName: "",
+		DatabaseName: n.dbName,
 	})
 	defer session.Close()
 
