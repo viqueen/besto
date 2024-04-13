@@ -2,6 +2,8 @@
 *.iml
 .env
 
+cov.out
+
 dist/
 node_modules/
 out/

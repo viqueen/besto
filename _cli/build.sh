@@ -10,7 +10,7 @@ function sdks() {
 }
 
 function go_test() {
-  go test ./lib/go-sdk/data/...
+  go test -v -coverprofile=./cov.out ./lib/go-sdk/data/...
 }
 
 eval "$@"
