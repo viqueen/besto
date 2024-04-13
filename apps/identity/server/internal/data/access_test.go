@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/require"
 	identityV1 "github.com/viqueen/besto/_api/go-sdk/identity/v1"
 	"github.com/viqueen/besto/apps/identity/server/internal/data"
+	libData "github.com/viqueen/besto/lib/go-sdk/data"
 	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
 	"testing"
 )
@@ -37,9 +38,7 @@ func TestIdentityProfileEntity(t *testing.T) {
 	require.NotNil(t, foundById)
 	require.Equal(t, created, foundById)
 
-	foundByProfileId, err := access.Reader().Filter(&identityV1.IdentityProfile{
-		ProfileId: newEntity.ProfileId,
-	})
+	foundByProfileId, err := access.Reader().ReadMany(map[string]interface{}{"profile_id": newEntity.ProfileId}, libData.PageInfo{})
 	require.NoError(t, err)
 	require.NotNil(t, foundByProfileId)
 	require.Len(t, foundByProfileId, 1)

@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	identityV1 "github.com/viqueen/besto/_api/go-sdk/identity/v1"
@@ -27,11 +28,9 @@ func NewNeo4jIdentityProfileEntity(client *neo4jclient.Neo4jClient) *Neo4jIdenti
 // --- READER ---
 
 func (r *Neo4jIdentityProfileEntity) Reader() libData.EntityReader[identityV1.IdentityProfile] {
-	return libData.NewEntityNeo4jReader[identityV1.IdentityProfile](
+	return libData.NewEntityNeo4jReaderNew[identityV1.IdentityProfile](
 		r.client,
-		r.entityName,
-		r.entityFields,
-		identityProfileReadCtx,
+		[]string{r.entityName},
 		recordToIdentityProfile,
 	)
 }
@@ -55,10 +54,10 @@ func identityProfileReadCtx(entity *identityV1.IdentityProfile) libData.EntityRe
 	}
 }
 
-func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {
+func recordToIdentityProfile(record neo4j.Record) (*identityV1.IdentityProfile, error) {
 	node, ok := record.GetByIndex(0).(neo4j.Node)
 	if !ok {
-		return nil
+		return nil, fmt.Errorf("recordToIdentityProfile: expected neo4j.Node, got %T", record.GetByIndex(0))
 	}
 
 	props := node.Props()
@@ -70,7 +69,7 @@ func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {
 	case identityV1.IdentityProvider_GITHUB:
 		githubProfile, err := stringToGithubProfile(profile)
 		if err != nil {
-			return nil
+			return nil, err
 		}
 		return &identityV1.IdentityProfile{
 			Id:        id,
@@ -79,11 +78,11 @@ func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {
 			Profile: &identityV1.IdentityProfile_Github{
 				Github: githubProfile,
 			},
-		}
+		}, nil
 	case identityV1.IdentityProvider_GOOGLE:
 		googleProfile, err := stringToGoogleProfile(profile)
 		if err != nil {
-			return nil
+			return nil, err
 		}
 		return &identityV1.IdentityProfile{
 			Id:        id,
@@ -92,9 +91,9 @@ func recordToIdentityProfile(record neo4j.Record) *identityV1.IdentityProfile {
 			Profile: &identityV1.IdentityProfile_Google{
 				Google: googleProfile,
 			},
-		}
+		}, nil
 	default:
-		return nil
+		return nil, fmt.Errorf("recordToIdentityProfile: unknown provider %s", provider)
 	}
 }
 

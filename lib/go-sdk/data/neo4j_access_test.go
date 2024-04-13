@@ -63,4 +63,9 @@ func TestEntityNeo4jAccess(t *testing.T) {
 	entities, err := reader.ReadMany(nameParams, data.PageInfo{})
 	require.NoError(t, err)
 	require.Len(t, entities, 2)
+
+	entities, err = reader.ReadMany(nameParams, data.PageInfo{PageSize: 1, PageOffset: 1})
+	require.NoError(t, err)
+	require.Len(t, entities, 1)
+	require.Equal(t, anotherEntity, entities[0])
 }
