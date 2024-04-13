@@ -1,0 +1,23 @@
+name: "Besto - build and test"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  test:
+    services:
+      neo4j-test:
+        image: neo4j:5.16.0-community
+        ports:
+          - "8687:7687"
+        env:
+          NEO4J_AUTH: neo4j/test-password
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+      - run: ./_cli/build.sh go_test

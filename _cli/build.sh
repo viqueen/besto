@@ -9,4 +9,8 @@ function sdks() {
   yarn workspace @besto/lib-web-sdk build
 }
 
+function go_test() {
+  go test ./lib/go-sdk/data/...
+}
+
 eval "$@"

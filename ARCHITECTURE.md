@@ -1,6 +1,5 @@
 ## architecture
 
-
 ### Auth Overview
 
 ```mermaid

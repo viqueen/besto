@@ -4,7 +4,5 @@
     "rootDir": "server",
     "outDir": "dist"
   },
-  "include": [
-    "server"
-  ]
+  "include": ["server"]
 }

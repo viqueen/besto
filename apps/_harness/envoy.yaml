@@ -19,8 +19,8 @@ static_resources:
                         envoy.filters.http.cors:
                           "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.CorsPolicy
                           allow_origin_string_match:
-                          - safe_regex:
-                              regex: \*
+                            - safe_regex:
+                                regex: \*
                           allow_methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
                           allow_headers: "User-Agent,X-User-Agent,Content-Type,Access-Control-Allow-Origin,X-Grpc-Web,Authorization,Cookie"
                           expose_headers: "grpc-status,grpc-message"
@@ -30,25 +30,25 @@ static_resources:
                         - match: { prefix: "/" }
                           route: { cluster: service_cluster }
                 http_filters:
-                - name: envoy.filters.http.cors
-                  typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
-                - name: envoy.filters.http.ext_authz
-                  typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-                    http_service:
-                      server_uri:
-                        uri: http://host.docker.internal:4000/api
-                        cluster: authz_cluster
-                        timeout: 5s
-                      path_prefix: "/api"
-                    failure_mode_allow: false
-                - name: envoy.grpc_web
-                  typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
-                - name: envoy.filters.http.router
-                  typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+                  - name: envoy.filters.http.cors
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
+                  - name: envoy.filters.http.ext_authz
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+                      http_service:
+                        server_uri:
+                          uri: http://host.docker.internal:4000/api
+                          cluster: authz_cluster
+                          timeout: 5s
+                        path_prefix: "/api"
+                      failure_mode_allow: false
+                  - name: envoy.grpc_web
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
     - name: authz_cluster
@@ -72,7 +72,7 @@ static_resources:
         envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
           "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
           explicit_http_config:
-            http2_protocol_options: { }
+            http2_protocol_options: {}
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: service_cluster
