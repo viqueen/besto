@@ -1,0 +1,4 @@
+syntax = "proto3";
+
+import "product/v1/product_service.proto";
+import "product/v2/product_service.proto";

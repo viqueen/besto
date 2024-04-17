@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/viqueen/besto/_api/go-sdk/product/v1;productV1";
+
+package product.v1;
+
+import "product/v1/models.proto";
+
+service ProductService {
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}

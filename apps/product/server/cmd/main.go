@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	grpczap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	"github.com/viqueen/besto/apps/identity/server/export"
-	neo4jclient "github.com/viqueen/besto/lib/go-sdk/neo4j-client"
+	"github.com/viqueen/besto/apps/product/server/export"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"log"
@@ -12,7 +11,8 @@ import (
 )
 
 func main() {
-	address := 40041
+	address := 30031
+
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", address))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -21,12 +21,6 @@ func main() {
 	zapLogger, _ := zap.NewDevelopment()
 	defer zapLogger.Sync()
 
-	// Create a new instance of a Neo4j client
-	neo4jClient, err := neo4jclient.NewNeo4jClient("bolt://neo4j-graph:7687", "neo4j", "password", "")
-	if err != nil {
-		log.Fatalf("failed to create neo4j client : %v", err)
-	}
-
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			grpczap.UnaryServerInterceptor(zapLogger),
@@ -34,9 +28,9 @@ func main() {
 		grpc.ChainStreamInterceptor(),
 	)
 
-	export.Bundle(server, neo4jClient)
+	export.Bundle(server)
 
-	log.Printf("platform grpc server running on port %d", address)
+	log.Printf("product grpc server running on port %d", address)
 	if serveErr := server.Serve(listener); serveErr != nil {
 		log.Fatalf("failed to serve on port %d: %v", address, serveErr)
 	}
